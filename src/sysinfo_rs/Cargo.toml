@@ -1,0 +1,25 @@
+[package]
+name = "sysinfo_rs"
+version = "0.1.0"
+edition = "2021"
+
+[profile.dev]
+opt-level = 'z'         # 調整最佳化等級: 最佳化輸出二進制檔案大小，但也會關閉循環向量化
+lto = true              # LTO(鏈結時間最佳化) = enable
+codegen-units = 1       # 調整並行程式碼產生單元數量
+panic = "abort"         # 無條件 abort
+strip = true            # 去除（對正常運作）無用的符號資訊
+
+[profile.release]
+opt-level = 'z'         # 調整最佳化等級: 最佳化輸出二進制檔案大小，但也會關閉循環向量化
+lto = true              # LTO(鏈結時間最佳化) = enable
+codegen-units = 1       # 調整並行程式碼產生單元數量
+panic = "abort"           # 無條件 abort
+strip = true                    # 去除（對正常運作）無用的符號資訊
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+lib_dmisys = {path = "../lib_dmisys"}
+sysinfo = "0.31.4"
+openssl = { version = "0.10", features = ["vendored"] }

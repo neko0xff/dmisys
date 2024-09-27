@@ -1,0 +1,41 @@
+# user @ Host-02 in ~/文件/rust/sysinfo_rs on git:master x [7:17:15] 
+$ ls /sys/class/dmi/id
+bios_date     bios_version     board_serial   chassis_asset_tag  chassis_vendor   power           product_serial  product_version  uevent
+bios_release  board_asset_tag  board_vendor   chassis_serial     chassis_version  product_family  product_sku     subsystem
+bios_vendor   board_name       board_version  chassis_type       modalias         product_name    product_uuid    sys_vendor
+
+bios_date：BIOS 的日期信息。
+bios_release：BIOS 的發行版本信息。
+bios_vendor：BIOS 廠商名稱。
+bios_version：BIOS 版本號。
+board_asset_tag：主板的資產標籤（如果有的話）。
+board_name：主板的名稱或型號。
+board_serial：主板的序列號。
+board_vendor：主板的廠商名稱。
+board_version：主板的版本號。
+chassis_asset_tag：機箱的資產標籤。
+chassis_serial：機箱的序列號。
+chassis_type：機箱的類型（例如塔式、桌面型等）。
+chassis_vendor：機箱的廠商名稱。
+chassis_version：機箱的版本號。
+modalias：用於表示設備的別名，通常在驅動程序匹配時使用。
+power：關於電源狀態的子目錄。
+product_family：產品系列信息。
+product_name：產品名稱（例如機型名稱）。
+product_serial：產品序列號。
+product_sku：產品的 SKU（庫存單位，常用於區分不同配置的相似產品）。
+product_uuid：產品的唯一標識符（UUID）。
+product_version：產品的版本號。
+subsystem：指向該設備子系統的符號鏈接。
+sys_vendor：系統供應商名稱。
+uevent：包含與設備有關的內核事件信息，通常在設備插拔時產生。
+
+# user @ Host-02 in /sys/class/dmi/id/power [7:44:06] 
+$ ls
+autosuspend_delay_ms  control  runtime_active_time  runtime_status  runtime_suspended_time
+
+autosuspend_delay_ms：設備進入自動掛起模式之前的延遲時間（以毫秒為單位）。可以修改這個值來設置設備進入自動掛起的等待時間。
+control：控制設備電源管理行為的文件。可以設置為 on（保持啟動）或 auto（允許自動掛起）。
+runtime_active_time：顯示設備當前運行時間（以微秒為單位）。這個值累計了設備處於活動狀態的時間。
+runtime_status：顯示當前設備的電源狀態。通常的值包括 active（活動中）或 suspended（掛起狀態）。
+runtime_suspended_time：顯示設備處於掛起狀態的累計時間（以微秒為單位）。
