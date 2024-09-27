@@ -14,18 +14,16 @@ fn main() {
     let power_runtime_active_time = power::read_runtime_active_time();
     let power_runtime_status = power::read_runtime_status();
     let power_runtime_suspended_time = power::read_runtime_suspended_time();
-    let mut sys = System::new_all();
-    let uptime = System::uptime();
+    let sys = System::new_all();
     let load_avg = System::load_average();
     let gpu_line = gpu::read_gpu().trim().replace("VGA compatible controller:", "");
-    let days = uptime / 86400;
-    let hours = (uptime % 86400) / 3600;
-    let minutes = (uptime % 3600) / 60;
+    
     let networks = Networks::new_with_refreshed_list();
     //std::thread::sleep(sysinfo::MINIMUM_CPU_UPDATE_INTERVAL);
     //sys.refresh_all();
+    let (days,hours, minutes) = cv::read_systime_uptime();
     let (networkcard,ipv4_address) = network::get_local_ip();
-    let(speed_networkcard,tx_speed,rx_speed) = network::get_speed();
+    let (speed_networkcard,tx_speed,rx_speed) = network::get_speed();
 
     println!("\n System");
     println!("OS: {}", System::long_os_version().unwrap_or_else(|| "Unknown".to_string()));
@@ -93,6 +91,5 @@ fn main() {
         Err(e) => println!("Failed to get SMART info: {}", e),
     }
 
-    //println!("\n OS Information\n{}", os_info);
     
 }

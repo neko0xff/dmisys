@@ -13,21 +13,20 @@ pub fn bytes_to_mb(data:u64) -> u64 {
     output 
 }
 
-
 pub fn sec_to_day(data:u64) -> u64{
-    let output =  data/ 86400;
+    let output =  data/86400;
 
     output
 }
 
 pub fn sec_to_hours(data:u64) -> u64{
-    let output =  data/ 86400;
+    let output =  (data/86400)/3600;
 
     output
 }
 
 pub fn sec_to_mins(data:u64) -> u64{
-    let output =  (data % 3600) / 60;
+    let output =  (data % 3600)/60;
 
     output
 }
