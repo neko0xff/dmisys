@@ -6,7 +6,8 @@ use crate::cv::*;
 
 pub fn get_public_ip() -> Result<String, reqwest::Error> {
     let server = "https://api.ipify.org";
-    let response = blocking::get(server)?.text()?;
+    let response = blocking::get(server)?
+        .text()?;
 
     Ok(response)
 }

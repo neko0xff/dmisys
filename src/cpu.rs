@@ -1,5 +1,8 @@
-use std::fs::File;
-use std::io::{self, BufRead};
+use std::{
+    fs::File,
+    io::{self, BufRead}
+};
+use sysinfo::System;
 
 pub fn get_cpu_model() -> Result<String, io::Error> {
     if let Ok(file) = File::open("/proc/cpuinfo") {
@@ -19,7 +22,6 @@ pub fn get_cpu_model() -> Result<String, io::Error> {
     }
     Err(io::Error::new(io::ErrorKind::NotFound, "Not found"))
 }
-
 
 pub fn get_cpu_cores() -> Result<i32, io::Error> {
     if let Ok(file) = File::open("/proc/cpuinfo") {
@@ -58,3 +60,17 @@ pub fn get_cpu_frequency() -> Result<f64, io::Error> {
     Err(io::Error::new(io::ErrorKind::NotFound, "Not found"))
 }
 
+pub fn get_cpu_loading() -> f64 {
+    // 回傳部分: 讀取1分鐘內的系統負戴值
+    let read_cpu_loading = System::load_average();
+    let output = read_cpu_loading.one; 
+
+    output
+}
+
+pub fn read_cpu_arch() -> String {
+    let output = System::cpu_arch()
+            .unwrap_or_else(|| "Unknown".to_string());
+
+    output
+}

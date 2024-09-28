@@ -1,5 +1,5 @@
 [package]
-name = "sysinfo_rs"
+name = "example"
 version = "0.1.0"
 edition = "2021"
 
@@ -20,6 +20,6 @@ strip = true                    # 去除（對正常運作）無用的符號資�
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-lib_dmisys = {path = "../lib_dmisys"}
+lib_dmisys = {path = "../"}
 sysinfo = "0.31.4"
 openssl = { version = "0.10", features = ["vendored"] }
