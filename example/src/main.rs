@@ -17,7 +17,6 @@ use sysinfo::{
 };
 
 fn main() {
-    let sys = System::new_all();
     let memory_read = memory::Info::new();
     let networks = Networks::new_with_refreshed_list();
     let (days,hours, minutes) = systime::read_systime_uptime();
@@ -49,10 +48,10 @@ fn main() {
     println!("{}: Tx = {} Mb / Rx = {} Mb",speed_networkcard,tx_speed,rx_speed);
 
     println!("\n CPU");
-    println!("CPU Model: {:?}",cpu::get_cpu_model().expect("REASON").to_string());
-    println!("CPU Frequency(Ghz): {:.4} Ghz",cpu::get_cpu_frequency().expect("REASON").to_string());
+    println!("CPU Model: {:?}",cpu::get_cpu_model());
+    println!("CPU Frequency(Ghz): {:.4} Ghz",cpu::get_cpu_frequency());
     println!("CPU Core: {:?}",cpu::get_cpu_cores());
-    println!("CPU threads: {:?}", sys.cpus().len());
+    println!("CPU threads: {:?}", cpu::read_cpu_threads());
     println!("CPU Arch: {}",cpu::read_cpu_arch());
     println!("CPU Load avg : {}%",cpu::get_cpu_loading().to_string());
 

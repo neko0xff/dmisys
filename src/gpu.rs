@@ -7,8 +7,9 @@ pub fn read_gpu_info() -> String {
         .output()
         .expect("Failed to execute command");
     let gpu_info = String::from_utf8_lossy(&output.stdout);
+    let output = gpu_info.to_string();
 
-    return gpu_info.to_string()
+    output
 }
 
 pub fn read_gpu_device() -> String {
