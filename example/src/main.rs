@@ -11,10 +11,7 @@ use lib_dmisys::{
     cv,
     systime
 };
-use sysinfo::{
-    Networks, 
-    System
-};
+use sysinfo::Networks;
 
 fn main() {
     let memory_read = memory::Info::new();
@@ -34,7 +31,8 @@ fn main() {
     println!("Uptime: {} days, {} hours, {} minutes", days, hours, minutes);
 
     println!("\n Network");
-    println!("Public IP Address: {}", network::get_public_ip().expect("REASON").to_string());
+    println!("Public IPv4 Address: {}", network::get_public_ipv4().expect("REASON").to_string());
+    println!("Public IPv6 Address: {}",network::get_public_ipv6().expect("REASON").to_string());
     println!("Local IP Address:");
     println!("{} : {}",networkcard,ipv4_address);
     println!("\n Network Speed");
@@ -48,9 +46,9 @@ fn main() {
     println!("{}: Tx = {} Mb / Rx = {} Mb",speed_networkcard,tx_speed,rx_speed);
 
     println!("\n CPU");
-    println!("CPU Model: {:?}",cpu::get_cpu_model());
+    println!("CPU Model: {:?}",cpu::read_cpu_model());
     println!("CPU Frequency(Ghz): {:.4} Ghz",cpu::get_cpu_frequency());
-    println!("CPU Core: {:?}",cpu::get_cpu_cores());
+    println!("CPU Core: {:?}",cpu::read_cpu_cores());
     println!("CPU threads: {:?}", cpu::read_cpu_threads());
     println!("CPU Arch: {}",cpu::read_cpu_arch());
     println!("CPU Load avg : {}%",cpu::get_cpu_loading().to_string());
@@ -85,9 +83,20 @@ fn main() {
     println!("\n Disk");
     let (name, total_space) = disk::read_disk_totalspace();
     println!("{}:{}",name,total_space);
+    println!("{}:{}",name,disk::read_disk_smartstatus(&name));
+    println!("{}:{}",name,disk::read_disk_devicemodel(&name));
+    println!("{}:{}",name,disk::read_disk_firmware(&name));
+    println!("{}:{}",name,disk::read_disk_sataver(&name));
+
+    
+    /*disk::read_disk_totalspace().for_each(|(name, total_space)| {
+        println!("{}:{}",name,total_space);
+        println!("{}:{}",name,disk::read_disk_smartstatus(&name));
+    });*/
+
     match disk::read_disk_smartinfo("/dev/sda") {
-        Ok(info) => println!("SMART Info:\n{}", info),
-        Err(e) => println!("Failed to get SMART info: {}", e),
+        Ok(info) => println!("Info:\n{}", info),
+        Err(e) => println!("Failed to get Info: {}", e),
     }
 
 }

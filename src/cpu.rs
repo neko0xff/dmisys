@@ -4,7 +4,7 @@ use std::{
 };
 use sysinfo::System;
 
-pub fn get_cpu_model() -> String {
+pub fn read_cpu_model() -> String {
     if let Ok(file) = File::open("/proc/cpuinfo") {
         let reader = io::BufReader::new(file);
 
@@ -25,13 +25,34 @@ pub fn get_cpu_model() -> String {
     "Unknown".to_string()
 }
 
-pub fn get_cpu_cores() -> u64 {
+pub fn read_cpu_cores() -> u64 {
     if let Ok(file) = File::open("/proc/cpuinfo") {
         let reader = io::BufReader::new(file);
 
         for line in reader.lines() {
             if let Ok(line) = line {
                 if line.starts_with("cpu cores") {
+                    let output = line.split(": ")
+                            .nth(1)
+                            .unwrap_or("0")
+                            .parse::<u64>()
+                            .unwrap_or(0);
+                    return output;
+                }
+            }
+        }
+    }
+
+    0
+}
+
+pub fn read_cpu_threads() -> u64 {
+    if let Ok(file) = File::open("/proc/cpuinfo") {
+        let reader = io::BufReader::new(file);
+
+        for line in reader.lines() {
+            if let Ok(line) = line {
+                if line.starts_with("siblings") {
                     let output = line.split(": ")
                             .nth(1)
                             .unwrap_or("0")
@@ -81,11 +102,4 @@ pub fn read_cpu_arch() -> String {
             .unwrap_or_else(|| "Unknown".to_string());
 
     output
-}
-
-pub fn read_cpu_threads() -> u64 {
-    let sys = System::new();
-    let output = sys.cpus().len();
-
-    output.try_into().unwrap()
 }

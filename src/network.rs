@@ -1,15 +1,46 @@
-use reqwest::blocking;
-use get_if_addrs::get_if_addrs;
-use std::net::IpAddr;
-use sysinfo::Networks;
 use crate::cv::*;
+use std::{
+    net::IpAddr,
+    error::Error
+};
+use get_if_addrs::get_if_addrs;
+use isahc::prelude::*;
+use sysinfo::Networks;
 
-pub fn get_public_ip() -> Result<String, reqwest::Error> {
-    let server = "https://api.ipify.org";
-    let response = blocking::get(server)?
-        .text()?;
+pub fn get_public_ipv4() -> Result<String, Box<dyn Error>> {
+    let server = "https://api.ipify.org";   
+    let mut response = isahc::get(server)?;
+   
+    if response.status().is_success() {
+        let public_ip = response.text()?;
+        Ok(public_ip)
+    } else {
+        Err(format!("Request failed with status: {}", response.status()).into())
+    }
+}
 
-    Ok(response)
+pub fn get_public_ipv6() -> Result<String, Box<dyn Error>> {
+    let server = "https://api6.ipify.org";
+    let mut response = isahc::get(server)?;
+
+    if response.status().is_success() {
+        let public_ip = response.text()?;
+        Ok(public_ip)
+    } else {
+        Err(format!("Request failed with status: {}", response.status()).into())
+    }
+}
+
+pub fn get_public_ipv64() -> Result<String, Box<dyn Error>> {
+    let server = "https://api64.ipify.org";   
+    let mut response = isahc::get(server)?;
+    if response.status().is_success() {
+        let public_ip = response.text()?;
+        Ok(public_ip)
+    } else {
+        Err(format!("Request failed with status: {}", response.status()).into())
+    }
+    
 }
 
 pub fn get_local_ip() -> (String,String) {
