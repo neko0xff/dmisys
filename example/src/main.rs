@@ -1,4 +1,4 @@
-use lib_dmisys::{
+use dmisys::{
     bios,
     cpu, 
     gpu, 
@@ -93,15 +93,17 @@ fn main() {
         println!(" {}: {:.2} GB", name, total_space);
     }
 
-    let (_name,_num) = disk::read_disk_totalspace();
+    //let (_name,_num) = disk::read_disk_totalspace();
     println!("Disk Info");
     let list = disk::read_disks_physicalhard_list();
-    for (name) in list {
-        println!("/dev/{}",name);
-        println!("Status: {}",disk::read_disk_smartstatus(&name));
-        println!("Model: {}",disk::read_disk_devicemodel(&name));
-        println!("Firmware: {}",disk::read_disk_firmware(&name));
-        println!("Version: {}",disk::read_disk_sataver(&name));
+    for name in list {
+        let path = format!("/dev/{}",name);
+        println!("{}",path);
+        println!("Status: {}",disk::read_disk_smartstatus(&path));
+        println!("Model: {}",disk::read_disk_devicemodel(&path));
+        println!("Firmware: {}",disk::read_disk_firmware(&path));
+        println!("Version: {}",disk::read_disk_sataver(&path));
+        println!("Rotation Rate: {}",disk::read_disk_rotationrate(&path));
     }
    
     /*disk::read_disk_totalspace().for_each(|(name, total_space)| {

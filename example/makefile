@@ -2,7 +2,7 @@ CC1:=cargo
 CC2:=rustup
 CC3:=cargo-clippy
 
-.PHONY: build run clean  build_release run_release format format-check lint test version
+.PHONY: build run clean  build_release run_release format format-check lint test version test_bin
 
 all: version clean run_release 
 
@@ -21,7 +21,10 @@ test:
 	@$(CC1)  test 
 
 build:
-	@$(CC1) build	
+	@$(CC1) build
+	
+test_bin:	
+	./target/release/example	
 
 build_release:
 	@$(CC1) build	--release

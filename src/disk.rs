@@ -31,8 +31,7 @@ pub fn read_disk_smartinfo(device: &str) -> Result<String, String> {
 }
 
 pub fn run_smartstatus(device:&str) -> String {
-    let output = Command::new("sudo")
-        .arg("smartctl")
+    let output = Command::new("smartctl")
         .arg("-H")   
         .arg(device) 
         .output()
@@ -41,15 +40,20 @@ pub fn run_smartstatus(device:&str) -> String {
     String::from_utf8_lossy(&output.stdout).to_string()
 }
 
-fn run_smartinfo(device: &str) -> String {
-    let output = Command::new("sudo")
-        .arg("smartctl")
+pub fn run_smartinfo(device: &str) -> String {
+    let output = Command::new("smartctl")
         .arg("-i")
         .arg(device)
         .output()
         .expect("Failed to execute smartctl");
 
     String::from_utf8_lossy(&output.stdout).to_string()
+}
+
+pub fn read_disk_rotationrate(device: &str) ->  String{
+    let output = read_disk_smartinfo(device).unwrap();
+    let regex_pattern = r"Rotation Rate:\s*(\d+)";
+    extract_info(&output, regex_pattern)
 }
 
 pub fn read_disk_smartstatus(device: &str) ->  String {
@@ -113,17 +117,21 @@ pub fn read_disk_sectorspace_vec() -> Vec<(String, f64)> {
 
 pub fn read_disk_all_vec() -> Vec<(String, f64)> {
     let mut disks_info = Vec::new();
+    
     let block_devices_path = Path::new("/sys/block/");
-
     if let Ok(entries) = fs::read_dir(block_devices_path) {
         for entry in entries {
             if let Ok(entry) = entry {
                 let device_name = entry.file_name().into_string().unwrap();
-                let size_path = block_devices_path.join(&device_name).join("size");
-                if let Ok(size_str) = fs::read_to_string(size_path) {
-                    if let Ok(sectors) = size_str.trim().parse::<u64>() {
-                        let total_size_gb = cv::sectors_to_gb(sectors);
-                        disks_info.push((device_name, total_size_gb));
+                
+                if !device_name.starts_with("loop") && !device_name.starts_with("ram") {
+
+                    let size_path = block_devices_path.join(&device_name).join("size");
+                    if let Ok(size_str) = fs::read_to_string(size_path) {
+                        if let Ok(sectors) = size_str.trim().parse::<u64>() {
+                            let total_size_gb = cv::sectors_to_gb(sectors);
+                            disks_info.push((device_name, total_size_gb));
+                        }
                     }
                 }
             }
@@ -181,7 +189,6 @@ pub fn read_disks_physicalhard_list() -> Vec<String> {
         }
     }
 
-    // 如果沒有找到任何硬碟，加入一個 "Not Found" 的預設值
     if disks_info.is_empty() {
         disks_info.push("Not Found".to_string());
     }
