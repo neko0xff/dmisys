@@ -1,7 +1,13 @@
-use std::process::Command;
+use std::{
+    process::Command,
+    fs,
+    path::Path
+};
 use sysinfo::Disks;
-use regex::Regex;
-use crate::cv::*;
+use crate::{
+    cv,
+    regex::*
+};
 
 pub fn read_disk_smartinfo(device: &str) -> Result<String, String> {
     let output = Command::new("sudo")
@@ -24,72 +30,50 @@ pub fn read_disk_smartinfo(device: &str) -> Result<String, String> {
     }
 }
 
+pub fn run_smartstatus(device:&str) -> String {
+    let output = Command::new("sudo")
+        .arg("smartctl")
+        .arg("-H")   
+        .arg(device) 
+        .output()
+        .expect("Failed to execute smartctl");
+
+    String::from_utf8_lossy(&output.stdout).to_string()
+}
+
+fn run_smartinfo(device: &str) -> String {
+    let output = Command::new("sudo")
+        .arg("smartctl")
+        .arg("-i")
+        .arg(device)
+        .output()
+        .expect("Failed to execute smartctl");
+
+    String::from_utf8_lossy(&output.stdout).to_string()
+}
+
 pub fn read_disk_smartstatus(device: &str) ->  String {
-    let output = Command::new("sudo")
-        .arg("smartctl")
-        .arg("-H")   
-        .arg(device) 
-        .output()
-        .expect("Failed to execute smartctl");
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    let re = Regex::new(r"SMART overall-health self-assessment test result:\s*(\w+)").unwrap();
-
-    if let Some(captures) = re.captures(&stdout) {
-        captures.get(1).map_or("", |m| m.as_str()).to_string()
-    } else {
-        "Unknow".to_string()
-    }
+    let output = run_smartstatus(device);
+    let regex_pattern = r"SMART overall-health self-assessment test result:\s*(\w+)";
+    extract_info(&output,regex_pattern)
 }
 
-pub fn read_disk_devicemodel(device: &str) ->  String {
-    let output = Command::new("sudo")
-        .arg("smartctl")
-        .arg("-H")   
-        .arg(device) 
-        .output()
-        .expect("Failed to execute smartctl");
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    let re = Regex::new(r"Device Model:\s*(\w+)").unwrap();
-
-    if let Some(captures) = re.captures(&stdout) {
-        captures.get(1).map_or("", |m| m.as_str()).to_string()
-    } else {
-        "Unknow".to_string()
-    }
+pub fn read_disk_devicemodel(device: &str) -> String {
+    let output = run_smartinfo(device);
+    let regex_pattern = r"Device Model:\s*(.+)";
+    extract_info(&output, regex_pattern)
 }
 
-pub fn read_disk_firmware(device: &str) ->  String {
-    let output = Command::new("sudo")
-        .arg("smartctl")
-        .arg("-H")   
-        .arg(device) 
-        .output()
-        .expect("Failed to execute smartctl");
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    let re = Regex::new(r"Firmware Version:\s*(\w+)").unwrap();
-
-    if let Some(captures) = re.captures(&stdout) {
-        captures.get(1).map_or("", |m| m.as_str()).to_string()
-    } else {
-        "Unknow".to_string()
-    }
+pub fn read_disk_firmware(device: &str) -> String {
+    let output = run_smartinfo(device);
+    let regex_pattern = r"Firmware Version:\s*(.+)";
+    extract_info(&output, regex_pattern)
 }
 
-pub fn read_disk_sataver(device: &str) ->  String {
-    let output = Command::new("sudo")
-        .arg("smartctl")
-        .arg("-H")   
-        .arg(device) 
-        .output()
-        .expect("Failed to execute smartctl");
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    let re = Regex::new(r"SATA Version is:\s*(\w+)").unwrap();
-
-    if let Some(captures) = re.captures(&stdout) {
-        captures.get(1).map_or("", |m| m.as_str()).to_string()
-    } else {
-        "Unknow".to_string()
-    }
+pub fn read_disk_sataver(device: &str) -> String {
+    let output = run_smartinfo(device);
+    let regex_pattern = r"SATA Version is:\s*(.+)";
+    extract_info(&output, regex_pattern)
 }
 
 pub fn read_disk_totalspace() -> (String, f64) {
@@ -99,7 +83,7 @@ pub fn read_disk_totalspace() -> (String, f64) {
 
     disks.list().into_iter().for_each(|disk| {
         name = disk.name().to_string_lossy().to_string();
-        total_space = bytes_to_gb(disk.total_space()) ; 
+        total_space = cv::bytes_to_gb(disk.total_space()) ; 
     });
 
     if name.is_empty() {
@@ -108,4 +92,99 @@ pub fn read_disk_totalspace() -> (String, f64) {
     }
 
     (name, total_space)
+}
+
+pub fn read_disk_sectorspace_vec() -> Vec<(String, f64)> {
+    let disks = Disks::new_with_refreshed_list();
+    let mut disk_info = Vec::new();
+
+    disks.list().into_iter().for_each(|disk| {
+        let name = disk.name().to_string_lossy().to_string();
+        let total_space = cv::bytes_to_gb(disk.total_space());
+        disk_info.push((name, total_space)); 
+    });
+
+    if disk_info.is_empty() {
+        disk_info.push(("Not Found".to_string(), 0.0));
+    }
+
+    disk_info
+}
+
+pub fn read_disk_all_vec() -> Vec<(String, f64)> {
+    let mut disks_info = Vec::new();
+    let block_devices_path = Path::new("/sys/block/");
+
+    if let Ok(entries) = fs::read_dir(block_devices_path) {
+        for entry in entries {
+            if let Ok(entry) = entry {
+                let device_name = entry.file_name().into_string().unwrap();
+                let size_path = block_devices_path.join(&device_name).join("size");
+                if let Ok(size_str) = fs::read_to_string(size_path) {
+                    if let Ok(sectors) = size_str.trim().parse::<u64>() {
+                        let total_size_gb = cv::sectors_to_gb(sectors);
+                        disks_info.push((device_name, total_size_gb));
+                    }
+                }
+            }
+        }
+    }
+
+    if disks_info.is_empty() {
+        disks_info.push(("Not Found".to_string(), 0.0));
+    }
+
+    disks_info
+}
+
+pub fn read_disks_pyhysicalhard_vec() -> Vec<(String, f64)> {
+    let mut disks_info = Vec::new();
+    
+    let block_devices_path = Path::new("/sys/block/");
+    if let Ok(entries) = fs::read_dir(block_devices_path) {
+        for entry in entries {
+            if let Ok(entry) = entry {
+                let device_name = entry.file_name().into_string().unwrap();
+
+                if device_name.starts_with("nvme") ||  device_name.starts_with("sd") || device_name.starts_with("hd") {
+                    let size_path = block_devices_path.join(&device_name).join("size");
+                    if let Ok(size_str) = fs::read_to_string(size_path) {
+                        if let Ok(sectors) = size_str.trim().parse::<u64>() {
+                            let total_size_gb = cv::sectors_to_gb(sectors);
+                            disks_info.push((device_name, total_size_gb));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if disks_info.is_empty() {
+        disks_info.push(("Not Found".to_string(), 0.0));
+    }
+
+    disks_info
+}
+
+pub fn read_disks_physicalhard_list() -> Vec<String> {
+    let mut disks_info = Vec::new();
+    let block_devices_path = Path::new("/sys/block/");
+
+    if let Ok(entries) = fs::read_dir(block_devices_path) {
+        for entry in entries {
+            if let Ok(entry) = entry {
+                let device_name = entry.file_name().into_string().unwrap();
+                if device_name.starts_with("nvme") || device_name.starts_with("sd") || device_name.starts_with("hd") {
+                    disks_info.push(device_name);
+                }
+            }
+        }
+    }
+
+    // 如果沒有找到任何硬碟，加入一個 "Not Found" 的預設值
+    if disks_info.is_empty() {
+        disks_info.push("Not Found".to_string());
+    }
+
+    disks_info
 }

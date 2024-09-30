@@ -30,3 +30,9 @@ pub fn sec_to_mins(data:u64) -> u64{
 
     output
 }
+
+pub fn sectors_to_gb(data:u64) -> f64 {
+    let output = (data * 512) as f64 / 1_073_741_824.0;
+
+    output 
+}

@@ -31,8 +31,8 @@ fn main() {
     println!("Uptime: {} days, {} hours, {} minutes", days, hours, minutes);
 
     println!("\n Network");
-    println!("Public IPv4 Address: {}", network::get_public_ipv4().expect("REASON").to_string());
-    println!("Public IPv6 Address: {}",network::get_public_ipv6().expect("REASON").to_string());
+    println!("Public IPv4 Address: {}", network::get_public_ipv4_address());
+    println!("Public IPv6 Address: {}", network:: get_public_ipv6_address());
     println!("Local IP Address:");
     println!("{} : {}",networkcard,ipv4_address);
     println!("\n Network Speed");
@@ -81,22 +81,37 @@ fn main() {
     println!("Runtime Suspended Time: {}",power::read_runtime_suspended_time());
 
     println!("\n Disk");
-    let (name, total_space) = disk::read_disk_totalspace();
-    println!("{}:{}",name,total_space);
-    println!("{}:{}",name,disk::read_disk_smartstatus(&name));
-    println!("{}:{}",name,disk::read_disk_devicemodel(&name));
-    println!("{}:{}",name,disk::read_disk_firmware(&name));
-    println!("{}:{}",name,disk::read_disk_sataver(&name));
+    let disk_data = disk::read_disk_sectorspace_vec();
+    println!("Sector Space");
+    for (name, total_space) in disk_data {
+        println!(" {}: {:.2} GB",name,total_space);
+    }
 
-    
+    let disks = disk::read_disk_all_vec();
+    println!("All Disk");
+    for (name, total_space) in disks {
+        println!(" {}: {:.2} GB", name, total_space);
+    }
+
+    let (_name,_num) = disk::read_disk_totalspace();
+    println!("Disk Info");
+    let list = disk::read_disks_physicalhard_list();
+    for (name) in list {
+        println!("/dev/{}",name);
+        println!("Status: {}",disk::read_disk_smartstatus(&name));
+        println!("Model: {}",disk::read_disk_devicemodel(&name));
+        println!("Firmware: {}",disk::read_disk_firmware(&name));
+        println!("Version: {}",disk::read_disk_sataver(&name));
+    }
+   
     /*disk::read_disk_totalspace().for_each(|(name, total_space)| {
         println!("{}:{}",name,total_space);
         println!("{}:{}",name,disk::read_disk_smartstatus(&name));
     });*/
 
-    match disk::read_disk_smartinfo("/dev/sda") {
+    /*match disk::read_disk_smartinfo("/dev/sda") {
         Ok(info) => println!("Info:\n{}", info),
         Err(e) => println!("Failed to get Info: {}", e),
-    }
+    }*/
 
 }

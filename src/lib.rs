@@ -9,3 +9,5 @@ pub mod host;
 pub mod network;
 pub mod memory;
 pub mod cv;
+pub mod web;
+pub mod regex;

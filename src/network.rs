@@ -1,46 +1,39 @@
-use crate::cv::*;
+use crate::{
+    cv::*,
+    web::*
+};
 use std::{
-    net::IpAddr,
-    error::Error
+    error::Error, 
+     net::IpAddr
 };
 use get_if_addrs::get_if_addrs;
-use isahc::prelude::*;
 use sysinfo::Networks;
 
-pub fn get_public_ipv4() -> Result<String, Box<dyn Error>> {
-    let server = "https://api.ipify.org";   
-    let mut response = isahc::get(server)?;
-   
-    if response.status().is_success() {
-        let public_ip = response.text()?;
-        Ok(public_ip)
-    } else {
-        Err(format!("Request failed with status: {}", response.status()).into())
-    }
+pub fn get_public_ipv4() -> Result<Option<String>, Box<dyn Error>> {
+    let url = "https://api.ipify.org";
+    cn_server_get(url)
 }
 
-pub fn get_public_ipv6() -> Result<String, Box<dyn Error>> {
-    let server = "https://api6.ipify.org";
-    let mut response = isahc::get(server)?;
-
-    if response.status().is_success() {
-        let public_ip = response.text()?;
-        Ok(public_ip)
-    } else {
-        Err(format!("Request failed with status: {}", response.status()).into())
-    }
+pub fn get_public_ipv6() -> Result<Option<String>, Box<dyn Error>> {
+    let url = "https://api6.ipify.org";
+    cn_server_get(url)
 }
 
-pub fn get_public_ipv64() -> Result<String, Box<dyn Error>> {
-    let server = "https://api64.ipify.org";   
-    let mut response = isahc::get(server)?;
-    if response.status().is_success() {
-        let public_ip = response.text()?;
-        Ok(public_ip)
-    } else {
-        Err(format!("Request failed with status: {}", response.status()).into())
-    }
-    
+pub fn get_public_ipv64() -> Result<Option<String>, Box<dyn Error>> {
+    let url = "https://api64.ipify.org";
+    cn_server_get(url)
+}
+
+pub fn get_public_ipv4_address() -> String {
+    format_msg(get_public_ipv4())
+}
+
+pub fn get_public_ipv6_address() -> String {
+    format_msg(get_public_ipv6())
+}
+
+pub fn get_public_ipv64_address() -> String {
+    format_msg(get_public_ipv64())
 }
 
 pub fn get_local_ip() -> (String,String) {
