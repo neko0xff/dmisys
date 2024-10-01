@@ -1,11 +1,16 @@
 use sysinfo::System;
 use crate::cv::*;
 
-pub fn read_systime_uptime() -> (u64,u64,u64) {
+pub fn read_systime_up() -> (u64,u64,u64) {
     let uptime = System::uptime();
-    let days = sec_to_day(uptime);
-    let hours = sec_to_hours(uptime);
-    let minutes = sec_to_mins(uptime);
+    let (days,hours,minutes)  = format_times(uptime);  
+
+    (days, hours, minutes)
+}
+
+pub fn read_systime_boot() -> (u64,u64,u64) {
+    let bootime = System::boot_time();
+    let (days,hours,minutes)  = format_times(bootime);  
 
     (days, hours, minutes)
 }

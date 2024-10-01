@@ -16,9 +16,11 @@ use sysinfo::Networks;
 fn main() {
     let memory_read = memory::Info::new();
     let networks = Networks::new_with_refreshed_list();
-    let (days,hours, minutes) = systime::read_systime_uptime();
+    let (days_up,hours_up, minutes_up) = systime::read_systime_up();
+    let (days_unix,hours_unix, minutes_unix) = systime::read_systime_boot();
     let (networkcard,ipv4_address) = network::get_local_ip();
     let (speed_networkcard,tx_speed,rx_speed) = network::get_speed();
+    let (io_write,io_read) = os::read_io_speed();
 
     println!("\n System");
     println!("OS: {}",os::read_osname());
@@ -28,7 +30,9 @@ fn main() {
     println!("Vendor: {}", host::read_host_vendor());
     println!("Board: {}",host::read_host_boardname());
     println!("Model: {}", host::read_host_model());
-    println!("Uptime: {} days, {} hours, {} minutes", days, hours, minutes);
+    println!("Uptime: {} days, {} hours, {} minutes", days_up, hours_up, minutes_up);
+    println!("Unix time(In 1970/01/01): {} days, {} hours, {} minutes", days_unix, hours_unix, minutes_unix);
+    println!("IO: Write= {} MB/Read= {} MB",io_write,io_read);
 
     println!("\n Network");
     println!("Public IPv4 Address: {}", network::get_public_ipv4_address());
@@ -93,7 +97,6 @@ fn main() {
         println!(" {}: {:.2} GB", name, total_space);
     }
 
-    //let (_name,_num) = disk::read_disk_totalspace();
     println!("Disk Info");
     let list = disk::read_disks_physicalhard_list();
     for name in list {
@@ -106,14 +109,4 @@ fn main() {
         println!("Rotation Rate: {}",disk::read_disk_rotationrate(&path));
     }
    
-    /*disk::read_disk_totalspace().for_each(|(name, total_space)| {
-        println!("{}:{}",name,total_space);
-        println!("{}:{}",name,disk::read_disk_smartstatus(&name));
-    });*/
-
-    /*match disk::read_disk_smartinfo("/dev/sda") {
-        Ok(info) => println!("Info:\n{}", info),
-        Err(e) => println!("Failed to get Info: {}", e),
-    }*/
-
 }

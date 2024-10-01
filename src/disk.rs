@@ -4,33 +4,19 @@ use std::{
     path::Path
 };
 use sysinfo::Disks;
-use crate::{
-    cv,
-    regex::*
-};
+use crate::cv;
 
-pub fn read_disk_smartinfo(device: &str) -> Result<String, String> {
-    let output = Command::new("sudo")
-        .arg("smartctl")
+pub fn run_cmd_smartdata(device:&str) -> String {
+    let output = Command::new("smartctl")
         .arg("-a")
         .arg(device)
-        .output();
+        .output()
+        .expect("Failed to execute smartctl");
 
-    match output {
-        Ok(output) => {
-            if !output.status.success() {
-                return Err(format!("Failed to execute command"));
-            }
-            let smart_info = String::from_utf8_lossy(&output.stdout).to_string();
-            Ok(smart_info)
-        }
-        Err(_e) => {
-            Err(format!("Please check your install <smartctl> tools. Please ensure you have installed it."))
-        }
-    }
+    String::from_utf8_lossy(&output.stdout).to_string()
 }
 
-pub fn run_smartstatus(device:&str) -> String {
+pub fn run_cmd_smartstatus(device:&str) -> String {
     let output = Command::new("smartctl")
         .arg("-H")   
         .arg(device) 
@@ -40,7 +26,7 @@ pub fn run_smartstatus(device:&str) -> String {
     String::from_utf8_lossy(&output.stdout).to_string()
 }
 
-pub fn run_smartinfo(device: &str) -> String {
+pub fn run_cmd_smartinfo(device: &str) -> String {
     let output = Command::new("smartctl")
         .arg("-i")
         .arg(device)
@@ -50,34 +36,40 @@ pub fn run_smartinfo(device: &str) -> String {
     String::from_utf8_lossy(&output.stdout).to_string()
 }
 
-pub fn read_disk_rotationrate(device: &str) ->  String{
-    let output = read_disk_smartinfo(device).unwrap();
-    let regex_pattern = r"Rotation Rate:\s*(\d+)";
-    extract_info(&output, regex_pattern)
-}
+pub fn read_disk_smartinfo(device: &str) -> String {
+    let output = run_cmd_smartdata(device);
+ 
+     output
+ }
 
 pub fn read_disk_smartstatus(device: &str) ->  String {
-    let output = run_smartstatus(device);
+    let output = run_cmd_smartstatus(device);
     let regex_pattern = r"SMART overall-health self-assessment test result:\s*(\w+)";
-    extract_info(&output,regex_pattern)
+    cv::regex_extract(&output,regex_pattern)
+}
+
+pub fn read_disk_rotationrate(device: &str) ->  String{
+    let output = run_cmd_smartinfo(device);
+    let regex_pattern = r"Rotation Rate:\s*(.+)";
+    cv::regex_extract(&output, regex_pattern)
 }
 
 pub fn read_disk_devicemodel(device: &str) -> String {
-    let output = run_smartinfo(device);
+    let output = run_cmd_smartinfo(device);
     let regex_pattern = r"Device Model:\s*(.+)";
-    extract_info(&output, regex_pattern)
+    cv::regex_extract(&output, regex_pattern)
 }
 
 pub fn read_disk_firmware(device: &str) -> String {
-    let output = run_smartinfo(device);
+    let output = run_cmd_smartinfo(device);
     let regex_pattern = r"Firmware Version:\s*(.+)";
-    extract_info(&output, regex_pattern)
+    cv::regex_extract(&output, regex_pattern)
 }
 
 pub fn read_disk_sataver(device: &str) -> String {
-    let output = run_smartinfo(device);
+    let output = run_cmd_smartinfo(device);
     let regex_pattern = r"SATA Version is:\s*(.+)";
-    extract_info(&output, regex_pattern)
+    cv::regex_extract(&output, regex_pattern)
 }
 
 pub fn read_disk_totalspace() -> (String, f64) {
@@ -105,7 +97,9 @@ pub fn read_disk_sectorspace_vec() -> Vec<(String, f64)> {
     disks.list().into_iter().for_each(|disk| {
         let name = disk.name().to_string_lossy().to_string();
         let total_space = cv::bytes_to_gb(disk.total_space());
-        disk_info.push((name, total_space)); 
+        if !name.starts_with("overlay"){
+            disk_info.push((name, total_space)); 
+        }
     });
 
     if disk_info.is_empty() {
@@ -117,15 +111,14 @@ pub fn read_disk_sectorspace_vec() -> Vec<(String, f64)> {
 
 pub fn read_disk_all_vec() -> Vec<(String, f64)> {
     let mut disks_info = Vec::new();
-    
     let block_devices_path = Path::new("/sys/block/");
+
     if let Ok(entries) = fs::read_dir(block_devices_path) {
         for entry in entries {
             if let Ok(entry) = entry {
                 let device_name = entry.file_name().into_string().unwrap();
                 
                 if !device_name.starts_with("loop") && !device_name.starts_with("ram") {
-
                     let size_path = block_devices_path.join(&device_name).join("size");
                     if let Ok(size_str) = fs::read_to_string(size_path) {
                         if let Ok(sectors) = size_str.trim().parse::<u64>() {
@@ -195,3 +188,4 @@ pub fn read_disks_physicalhard_list() -> Vec<String> {
 
     disks_info
 }
+

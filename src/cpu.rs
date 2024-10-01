@@ -5,7 +5,9 @@ use std::{
 use sysinfo::System;
 
 pub fn read_cpu_model() -> String {
-    if let Ok(file) = File::open("/proc/cpuinfo") {
+    let info_path = "/proc/cpuinfo";
+
+    if let Ok(file) = File::open(info_path) {
         let reader = io::BufReader::new(file);
 
         for line in reader.lines() {
@@ -26,7 +28,9 @@ pub fn read_cpu_model() -> String {
 }
 
 pub fn read_cpu_cores() -> u64 {
-    if let Ok(file) = File::open("/proc/cpuinfo") {
+    let info_path = "/proc/cpuinfo";
+
+    if let Ok(file) = File::open(info_path) {
         let reader = io::BufReader::new(file);
 
         for line in reader.lines() {
@@ -47,7 +51,9 @@ pub fn read_cpu_cores() -> u64 {
 }
 
 pub fn read_cpu_threads() -> u64 {
-    if let Ok(file) = File::open("/proc/cpuinfo") {
+    let info_path = "/proc/cpuinfo";
+
+    if let Ok(file) = File::open(info_path) {
         let reader = io::BufReader::new(file);
 
         for line in reader.lines() {
@@ -68,7 +74,9 @@ pub fn read_cpu_threads() -> u64 {
 }
 
 pub fn get_cpu_frequency() -> f64 {
-    if let Ok(file) = File::open("/proc/cpuinfo") {
+    let info_path = "/proc/cpuinfo";
+    
+    if let Ok(file) = File::open(info_path) {
         let reader = io::BufReader::new(file);
 
         for line in reader.lines() {

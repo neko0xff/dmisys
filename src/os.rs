@@ -1,5 +1,6 @@
 use std::fs;
 use sysinfo::System;
+use crate::cv;
 
 pub fn read_release() -> String {
     let file = "/etc/os-release";
@@ -12,7 +13,9 @@ pub fn read_release() -> String {
 }
 
 pub fn read_distro_name() -> String {
-    if let Ok(contents) = fs::read_to_string("/etc/os-release") {
+    let file = "/etc/os-release";
+
+    if let Ok(contents) = fs::read_to_string(file) {
         for line in contents.lines() {
             if line.starts_with("NAME=") {
                 return line.trim_start_matches("NAME=").replace("\"", "").to_string();
@@ -42,4 +45,18 @@ pub fn read_kernel() -> String {
         .unwrap_or_else(|| "Unknown".to_string());
 
     output
+}
+
+pub fn read_io_speed() -> (u64, u64) {
+    let mut total_write: u64 = 0;
+    let mut total_read: u64 = 0;
+    let sys = System::new_all();  
+
+    for (_pid, process) in sys.processes() {
+        let disk_usage = process.disk_usage();
+        total_write += cv::bytes_to_mb(disk_usage.written_bytes);
+        total_read +=  cv::bytes_to_mb(disk_usage.read_bytes);
+    }
+
+    (total_write, total_read)
 }
