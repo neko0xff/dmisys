@@ -48,12 +48,23 @@ pub fn format_times(time: u64) -> (u64,u64,u64) {
 }
 
 /*正規表示法*/
-pub fn regex_extract(output: &str, pattern: &str) -> String {
+// 單筆
+pub fn regex_extract(input: &str, pattern: &str) -> String {
     let re = Regex::new(pattern).unwrap();
     
-    if let Some(captures) = re.captures(output) {
+    if let Some(captures) = re.captures(input) {
         captures.get(1).map_or("Unknown", |m| m.as_str()).to_string()
     } else {
         "Unknown".to_string()
     }
+}
+
+// 多筆
+pub fn regex_extract_vec(output: &str, pattern: &str) -> Vec<String> {
+    let re = Regex::new(pattern).unwrap();
+    let output: Vec<String> = re.captures_iter(&output)
+        .map(|cap| cap[1].trim().to_string())
+        .collect();
+
+    output
 }

@@ -3,7 +3,7 @@ pub mod systime;
 pub mod power;
 pub mod bios;
 pub mod cpu;
-pub mod gpu;
+pub mod device;
 pub mod disk;
 pub mod host;
 pub mod network;

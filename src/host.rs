@@ -12,6 +12,7 @@ pub fn read_host_boardname() -> String {
 
     output
 }
+
 pub fn read_host_model() -> String {
     let dmi = "/sys/class/dmi/id/product_name";
     let output = file::return_pathdata(dmi);

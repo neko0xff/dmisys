@@ -1,26 +1,27 @@
 use dmisys::{
     bios,
     cpu, 
-    gpu, 
+    device, 
     host, 
     network, 
     os, 
     power,
     disk,
     memory,
-    cv,
     systime
 };
-use sysinfo::Networks;
 
 fn main() {
     let memory_read = memory::Info::new();
-    let networks = Networks::new_with_refreshed_list();
+    let gpus = device::read_device_gpu();
+    let disks_drive = disk::read_disk_all_vec();
+    let sector_data = disk::read_disk_sectorspace_vec();
+    let disk_list = disk::read_disks_physicaldrive_list();
     let (days_up,hours_up, minutes_up) = systime::read_systime_up();
     let (days_unix,hours_unix, minutes_unix) = systime::read_systime_boot();
-    let (networkcard,ipv4_address) = network::get_local_ip();
-    let (speed_networkcard,tx_speed,rx_speed) = network::get_speed();
     let (io_write,io_read) = os::read_io_speed();
+    let local_ipv64 = network::get_local_ipv64();
+    let network_speed = network::get_speed();
 
     println!("\n System");
     println!("OS: {}",os::read_osname());
@@ -35,20 +36,27 @@ fn main() {
     println!("IO: Write= {} MB/Read= {} MB",io_write,io_read);
 
     println!("\n Network");
-    println!("Public IPv4 Address: {}", network::get_public_ipv4_address());
-    println!("Public IPv6 Address: {}", network:: get_public_ipv6_address());
-    println!("Local IP Address:");
-    println!("{} : {}",networkcard,ipv4_address);
-    println!("\n Network Speed");
-    networks.into_iter().for_each(|(interface_name, data)| {
-        let received_mb = cv::bytes_to_mb(data.total_received()) as f64;
-        let transmitted_mb = cv::bytes_to_mb(data.total_transmitted()) as f64;
-        println!("{}: Rx {}MB / Tx {}MB", interface_name, received_mb, transmitted_mb);
-    });
-    println!("\n Speed");
-    println!("{}: Tx = {} Mb / Rx = {} Mb",speed_networkcard,tx_speed,rx_speed);
-    println!("{}: Tx = {} Mb / Rx = {} Mb",speed_networkcard,tx_speed,rx_speed);
+    println!("Public Address");
+    println!(" IPv4 Address: {}", network::get_public_ipv4_address());
+    println!(" IPv6 Address: {}", network:: get_public_ipv6_address());
+    println!("Local Address");
+    if local_ipv64.is_empty(){
+        println!("Not Running a Network Card!");
+    }else{
+        for(_index,(interface_name,local_ipv4,local_ipv6)) in local_ipv64.iter().enumerate(){
+            println!("{}: IPV4  = {} / IPv6 = {}",interface_name,local_ipv4,local_ipv6);
+        }
+    }
 
+    println!("\n Network Speed");
+    if network_speed.is_empty(){
+        println!("Not Running a Network Card!");
+    }else{
+        for(_index,(interface_name,tx_speed,rx_speed)) in network_speed.iter().enumerate(){
+            println!("{}: Tx = {} Mb / Rx = {} Mb",interface_name,tx_speed,rx_speed);
+        }
+    }
+    
     println!("\n CPU");
     println!("CPU Model: {:?}",cpu::read_cpu_model());
     println!("CPU Frequency(Ghz): {:.4} Ghz",cpu::get_cpu_frequency());
@@ -58,7 +66,13 @@ fn main() {
     println!("CPU Load avg : {}%",cpu::get_cpu_loading().to_string());
 
     println!("\n GPU");
-    println!("Device: {}",  gpu::read_gpu_device());
+    if gpus.is_empty() {
+        println!("No GPUs found");
+    } else {
+        for (index, gpu) in gpus.iter().enumerate() {
+            println!("GPU {}: {}", index + 1, gpu);
+        }
+    }
 
     println!("\n BIOS");
     println!("Ventor: {}",bios::read_bios_vendor());
@@ -85,21 +99,17 @@ fn main() {
     println!("Runtime Suspended Time: {}",power::read_runtime_suspended_time());
 
     println!("\n Disk");
-    let disk_data = disk::read_disk_sectorspace_vec();
     println!("Sector Space");
-    for (name, total_space) in disk_data {
+    for (name, total_space) in sector_data {
         println!(" {}: {:.2} GB",name,total_space);
     }
-
-    let disks = disk::read_disk_all_vec();
     println!("All Disk");
-    for (name, total_space) in disks {
+    for (name, total_space) in disks_drive {
         println!(" {}: {:.2} GB", name, total_space);
     }
 
     println!("Disk Info");
-    let list = disk::read_disks_physicalhard_list();
-    for name in list {
+    for name in disk_list {
         let path = format!("/dev/{}",name);
         println!("{}",path);
         println!("Status: {}",disk::read_disk_smartstatus(&path));

@@ -91,8 +91,8 @@ pub fn read_disk_totalspace() -> (String, f64) {
 }
 
 pub fn read_disk_sectorspace_vec() -> Vec<(String, f64)> {
-    let disks = Disks::new_with_refreshed_list();
     let mut disk_info = Vec::new();
+    let disks = Disks::new_with_refreshed_list();
 
     disks.list().into_iter().for_each(|disk| {
         let name = disk.name().to_string_lossy().to_string();
@@ -138,10 +138,11 @@ pub fn read_disk_all_vec() -> Vec<(String, f64)> {
     disks_info
 }
 
-pub fn read_disks_pyhysicalhard_vec() -> Vec<(String, f64)> {
+pub fn read_disks_pyhysicaldrive_vec() -> Vec<(String, f64)> {
     let mut disks_info = Vec::new();
-    
     let block_devices_path = Path::new("/sys/block/");
+    
+    let block_devices_path = Path::new(block_devices_path);
     if let Ok(entries) = fs::read_dir(block_devices_path) {
         for entry in entries {
             if let Ok(entry) = entry {
@@ -167,7 +168,7 @@ pub fn read_disks_pyhysicalhard_vec() -> Vec<(String, f64)> {
     disks_info
 }
 
-pub fn read_disks_physicalhard_list() -> Vec<String> {
+pub fn read_disks_physicaldrive_list() -> Vec<String> {
     let mut disks_info = Vec::new();
     let block_devices_path = Path::new("/sys/block/");
 
