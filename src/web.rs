@@ -17,10 +17,3 @@ pub fn cn_server_get(server_url: &str) -> Result<Option<String>, Box<dyn Error>>
     }
 }
 
-pub fn format_msg(result: Result<Option<String>, Box<dyn Error>>) -> String {
-    match result {
-        Ok(Some(data)) => data,
-        Ok(None) => "No Found".to_string(),
-        Err(e) => format!("ERROR={}", e),
-    }
-}

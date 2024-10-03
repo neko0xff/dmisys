@@ -1,29 +1,19 @@
-use std::fs;
 use sysinfo::System;
-use crate::cv;
+use crate::{cv,file};
 
 pub fn read_release() -> String {
     let file = "/etc/os-release";
+    let output = file::read_config_info(file);
 
-    if let Ok(contents) = fs::read_to_string(file) {
-        return contents;
-    }
-
-    "OS information not available".to_string()
+    output
 }
 
 pub fn read_distro_name() -> String {
     let file = "/etc/os-release";
+    let find = "NAME=";
+    let output = file::read_config_var_string(file, find);
 
-    if let Ok(contents) = fs::read_to_string(file) {
-        for line in contents.lines() {
-            if line.starts_with("NAME=") {
-                return line.trim_start_matches("NAME=").replace("\"", "").to_string();
-            }
-        }
-    }
-
-    "Unknown Distro".to_string()
+    output
 }
 
 pub  fn read_osname() -> String {

@@ -1,7 +1,4 @@
-use crate::{
-    cv::*,
-    web::*
-};
+use crate::{cv,web};
 use std::{
     error::Error, 
     net::IpAddr
@@ -11,50 +8,30 @@ use sysinfo::Networks;
 
 pub fn get_public_ipv4() -> Result<Option<String>, Box<dyn Error>> {
     let url = "https://api.ipify.org";
-    cn_server_get(url)
+    web::cn_server_get(url)
 }
 
 pub fn get_public_ipv6() -> Result<Option<String>, Box<dyn Error>> {
     let url = "https://api6.ipify.org";
-    cn_server_get(url)
+    web::cn_server_get(url)
 }
 
 pub fn get_public_ipv64() -> Result<Option<String>, Box<dyn Error>> {
     let url = "https://api64.ipify.org";
-    cn_server_get(url)
+    web::cn_server_get(url)
 }
 
 pub fn get_public_ipv4_address() -> String {
-    format_msg(get_public_ipv4())
+    cv::format_msg(get_public_ipv4())
 }
 
 pub fn get_public_ipv6_address() -> String {
-    format_msg(get_public_ipv6())
+    cv::format_msg(get_public_ipv6())
 }
 
 pub fn get_public_ipv64_address() -> String {
-    format_msg(get_public_ipv64())
+    cv::format_msg(get_public_ipv64())
 }
-
-/*pub fn get_macaddress() -> Vec<(String, String)> {
-    let mut mac_info = Vec::new();
-    let mut mac_address = "None".to_string();
-    let networks = Networks::new_with_refreshed_list();
-
-    for (interface_name, network) in networks.iter() {
-        let mac_address = match network.mac_address() {
-            Some(mac) => {
-                mac.to_string()
-            },
-            None => {
-                "None".to_string()
-            },
-        };
-        mac_info.push((interface_name.clone(), mac_address));
-    }
-
-    mac_info
-}*/
 
 pub fn get_local_ipv64() -> Vec<(String, String,String)> {
     let if_addrs = get_if_addrs().unwrap();
@@ -90,13 +67,11 @@ pub fn get_speed() -> Vec<(String, f64, f64)> {
     let mut speed_info = Vec::new();
 
     for iface in if_addrs {
-        if let IpAddr::V4(ipv4) = iface.addr.ip() {
-            if !ipv4.is_loopback() {
-                if let Some((iface_name, data)) = networks.iter().find(|(name, _)| *name == &iface.name) {
-                    let received_mb = bytes_to_mb(data.total_received()) as f64;
-                    let transmitted_mb = bytes_to_mb(data.total_transmitted()) as f64;
-                    speed_info.push((iface_name.to_string(), transmitted_mb, received_mb));
-                }
+        if !iface.addr.is_loopback() {
+            if let Some((iface_name, data)) = networks.iter().find(|(name, _)| *name == &iface.name) {
+                let received_mb = cv::bytes_to_mb(data.total_received()) as f64;
+                let transmitted_mb = cv::bytes_to_mb(data.total_transmitted()) as f64;
+                speed_info.push((iface_name.to_string(), transmitted_mb, received_mb));
             }
         }
     }
@@ -106,4 +81,22 @@ pub fn get_speed() -> Vec<(String, f64, f64)> {
     }
 
     speed_info
+}
+
+pub fn get_macaddress() -> Vec<(String, String)> {
+    let mut mac_info = Vec::new();
+    let networks = Networks::new_with_refreshed_list();
+
+    for (interface_name, network) in networks.iter() {
+        let mac = network.mac_address(); 
+        let mac_address = format!("{:02X}:{:02X}:{:02X}:{:02X}:{:02X}:{:02X}", 
+                                  mac.0[0], mac.0[1], mac.0[2], mac.0[3], mac.0[4], mac.0[5]);
+        mac_info.push((interface_name.clone(), mac_address));
+    }
+
+    if mac_info.is_empty(){
+        mac_info.push(("".to_string(), "".to_string()));
+    }
+
+    mac_info
 }

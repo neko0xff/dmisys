@@ -19,9 +19,6 @@ lint:
 
 test:
 	@$(CC1)  test 
-
-build:
-	@$(CC1) build
 	
 test_bin:	
 	./target/release/example	
@@ -32,8 +29,11 @@ build_release:
 run_release: 
 	@$(CC1) run	--release
 
-run: 
-	@$(CC1) run	
+build_debug:
+	@$(CC1) build
+
+run_debug:
+	@$(CC1) run
 
 clean:
 	@$(CC1) clean	

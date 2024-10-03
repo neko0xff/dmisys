@@ -8,7 +8,8 @@ use dmisys::{
     power,
     disk,
     memory,
-    systime
+    systime,
+    supply
 };
 
 fn main() {
@@ -22,6 +23,7 @@ fn main() {
     let (io_write,io_read) = os::read_io_speed();
     let local_ipv64 = network::get_local_ipv64();
     let network_speed = network::get_speed();
+    let mac_address = network::get_macaddress();
 
     println!("\n System");
     println!("OS: {}",os::read_osname());
@@ -54,6 +56,15 @@ fn main() {
     }else{
         for(_index,(interface_name,tx_speed,rx_speed)) in network_speed.iter().enumerate(){
             println!("{}: Tx = {} Mb / Rx = {} Mb",interface_name,tx_speed,rx_speed);
+        }
+    }
+
+    println!("\n Mac Address");
+    if mac_address.is_empty(){
+        println!("Not Running a Network Card!");
+    }else{
+        for(_index,(interface_name,mac)) in mac_address.iter().enumerate(){
+            println!("{}: {}",interface_name,mac);
         }
     }
     
@@ -98,10 +109,28 @@ fn main() {
     println!("Runtime Active Time: {}",power::read_runtime_active_time());
     println!("Runtime Suspended Time: {}",power::read_runtime_suspended_time());
 
+    println!("\n Power Supply");
+    println!("Main: {}",supply::read_main_name());
+    println!("\tDev Type: {}",supply::read_main_devtype());
+    println!("\tStatus: {}",supply::read_main_online());
+
     println!("\n Disk");
     println!("Sector Space");
-    for (name, total_space) in sector_data {
-        println!(" {}: {:.2} GB",name,total_space);
+    for (index, (name, filesystem, mount_point, total_space, used_space,used_point, free_space)) in sector_data.iter().enumerate() {
+        println!(
+            "Sector {}: {} (Filesystem: {}, Mount: {})",
+            index,
+            name,
+            filesystem.as_deref().unwrap_or("Unknown"),
+            mount_point.as_deref().unwrap_or("Unknown")
+        );
+        println!(
+            "    Total: {:.2} GB, Used: {:.2} GB ({:.1}%), Free: {:.2} GB",
+            total_space,
+            used_space,
+            used_point,
+            free_space
+        );
     }
     println!("All Disk");
     for (name, total_space) in disks_drive {
@@ -110,13 +139,13 @@ fn main() {
 
     println!("Disk Info");
     for name in disk_list {
-        let path = format!("/dev/{}",name);
-        println!("{}",path);
-        println!("Status: {}",disk::read_disk_smartstatus(&path));
-        println!("Model: {}",disk::read_disk_devicemodel(&path));
-        println!("Firmware: {}",disk::read_disk_firmware(&path));
-        println!("Version: {}",disk::read_disk_sataver(&path));
-        println!("Rotation Rate: {}",disk::read_disk_rotationrate(&path));
+        let path = format!("{}",name);
+        println!(" {}",path);
+        println!("\tStatus: {}",disk::read_disk_smartstatus(&path));
+        println!("\tModel: {}",disk::read_disk_devicemodel(&path));
+        println!("\tFirmware: {}",disk::read_disk_firmware(&path));
+        println!("\tVersion: {}",disk::read_disk_sataver(&path));
+        println!("\tRotation Rate: {}",disk::read_disk_rotationrate(&path));
     }
    
 }
