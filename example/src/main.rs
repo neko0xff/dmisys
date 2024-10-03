@@ -9,7 +9,8 @@ use dmisys::{
     disk,
     memory,
     systime,
-    supply
+    supply,
+    file
 };
 
 fn main() {
@@ -110,9 +111,14 @@ fn main() {
     println!("Runtime Suspended Time: {}",power::read_runtime_suspended_time());
 
     println!("\n Power Supply");
-    println!("Main: {}",supply::read_main_name());
-    println!("\tDev Type: {}",supply::read_main_devtype());
-    println!("\tStatus: {}",supply::read_main_online());
+    if file::check_directory_null("/sys/class/power_supply/") == false{
+        println!("Main: {}",supply::read_main_name());
+        println!("\tDev Type: {}",supply::read_main_devtype());
+        println!("\tStatus: {}",supply::read_main_online());
+    }else {
+        println!("No Supported");
+    }
+    
 
     println!("\n Disk");
     println!("Sector Space");
@@ -144,6 +150,8 @@ fn main() {
         println!("\tStatus: {}",disk::read_disk_smartstatus(&path));
         println!("\tModel: {}",disk::read_disk_devicemodel(&path));
         println!("\tFirmware: {}",disk::read_disk_firmware(&path));
+        println!("\tSerial Number: {}",disk::read_disk_serial(&path));
+        println!("\tFactor: {}",disk::read_disk_factor(&path));
         println!("\tVersion: {}",disk::read_disk_sataver(&path));
         println!("\tRotation Rate: {}",disk::read_disk_rotationrate(&path));
     }

@@ -1,4 +1,61 @@
-use std::fs;
+use std::{fs,io};
+use std::path::Path;
+
+/*檢查檔案&路徑*/
+pub fn check_used_exists(path:&str) -> bool {
+    let metadata = fs::metadata(path);
+    let output = metadata.is_ok();
+
+    output
+}
+
+pub fn check_used_type(path: &str) -> Result<String, io::Error> {
+    let metadata = fs::metadata(path)?;
+    let file_type = metadata.file_type();
+
+    if file_type.is_file() {
+        Ok("File".to_string())
+    } else if file_type.is_dir() {
+        Ok("Directory".to_string())
+    } else if file_type.is_symlink() {
+        Ok("SymbolicLink".to_string())
+    } else {
+        Ok("Unknown".to_string())
+    }
+}
+
+pub fn check_directory(dir_path: &str) -> Result<Vec<String>, io::Error> {
+    let path = Path::new(dir_path);
+    let mut entries = Vec::new();
+
+    if !path.exists() || !path.is_dir() {
+        return Err(io::Error::new(
+            io::ErrorKind::NotFound,
+            format!("Unkown")
+        ));
+    }
+
+    for entry in fs::read_dir(path)? {
+        let entry = entry?;
+        let file_name = entry.file_name();
+        entries.push(file_name.to_string_lossy().into_owned());
+    }
+
+    Ok(entries)
+}
+
+pub fn check_directory_null(dir_path: &str) -> bool {
+    match check_directory(dir_path) {
+        Ok(entries) => {
+            if entries.is_empty() {
+                return true;
+            } else {
+               return false;
+            }
+        }
+        Err(_e) => return false,
+    }
+}
 
 /*讀取路徑檔案 */
 pub fn return_pathdata(path:&str) -> String {

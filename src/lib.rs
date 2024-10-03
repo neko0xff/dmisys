@@ -12,3 +12,4 @@ pub mod cv;
 pub mod web;
 pub mod file;
 pub mod supply;
+pub mod battery;

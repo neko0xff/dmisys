@@ -66,6 +66,18 @@ pub fn read_disk_firmware(device: &str) -> String {
     cv::regex_extract(&output, regex_pattern)
 }
 
+pub fn read_disk_serial(device: &str) -> String {
+    let output = run_cmd_smartinfo(device);
+    let regex_pattern = r"Serial Number:\s*(.+)";
+    cv::regex_extract(&output, regex_pattern)
+}
+
+pub fn read_disk_factor(device: &str) -> String { 
+    let output = run_cmd_smartinfo(device);
+    let regex_pattern = r"Form Factor:\s*(.+)";
+    cv::regex_extract(&output, regex_pattern)
+}
+
 pub fn read_disk_sataver(device: &str) -> String {
     let output = run_cmd_smartinfo(device);
     let regex_pattern = r"SATA Version is:\s*(.+)";
@@ -181,7 +193,7 @@ pub fn read_disks_physicaldrive_list() -> Vec<String> {
             if let Ok(entry) = entry {
                 let device_name = entry.file_name().into_string().unwrap();
                 if device_name.starts_with("nvme") || device_name.starts_with("sd") || device_name.starts_with("hd") {
-                    let device_name_str = format!("/sys/block/{}",device_name);
+                    let device_name_str = format!("/dev/{}",device_name);
                     disks_info.push(device_name_str);
                 }
             }
