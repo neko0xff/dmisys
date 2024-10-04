@@ -1,13 +1,4 @@
-use crate::{
-    file,
-    device
-};
-
-pub fn read_adp_counts() -> usize {
-    let output = device::find_devices_counts("ADP").len();
-
-    output
-}
+use crate::file;
 
 pub fn read_main_info() -> String {
     let file = "/sys/class/power_supply/ADP1/uevent";

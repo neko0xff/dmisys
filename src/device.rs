@@ -51,3 +51,39 @@ pub fn find_devices_counts(device_type: &str) -> Vec<usize> {
     }
     devices
 }
+
+pub fn read_adp_counts() -> usize {
+    let power_supply_dir = "/sys/class/power_supply/";
+    let mut count = 0;
+
+    if let Ok(entries) = fs::read_dir(power_supply_dir) {
+        for entry in entries {
+            if let Ok(entry) = entry {
+                let device_name = entry.file_name().into_string().unwrap_or_default();
+                if device_name.starts_with("ADP") {
+                    count += 1;
+                }
+            }
+        }
+    }
+
+    count
+}
+
+pub fn read_bat_counts() -> usize {
+    let power_supply_dir = "/sys/class/power_supply/";
+    let mut count = 0;
+
+    if let Ok(entries) = fs::read_dir(power_supply_dir) {
+        for entry in entries {
+            if let Ok(entry) = entry {
+                let device_name = entry.file_name().into_string().unwrap_or_default();
+                if device_name.starts_with("BAT") {
+                    count += 1;
+                }
+            }
+        }
+    }
+
+    count
+}

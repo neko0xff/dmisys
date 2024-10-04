@@ -47,6 +47,25 @@ pub fn point_cal(used:f64,total:f64) -> f64{
     output
 }
 
+/* 單位轉換: 電流(Ampere)&電壓(Volt) */
+pub fn mv_to_volts(mv: usize) -> f64 {
+    let output = (mv as f64) / 1_000_000.0;
+
+    output
+}
+
+pub fn mah_to_uah(mah: usize) -> f64 {
+    let output = (mah as f64) / 1_000.0;
+
+    output
+}
+
+pub fn ma_to_a(ma: usize) -> f64 {
+    let output = (ma as f64) / 1_000.0;
+
+    output
+}
+
 /*單位轉換: 數值*/
 // 無符號整數轉布林
 pub fn usize_to_bool(n: usize) -> bool{
