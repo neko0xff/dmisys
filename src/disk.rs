@@ -113,7 +113,7 @@ pub fn read_disk_sectorspace_vec() -> Vec<(String, Option<String>, Option<String
         let total_space = cv::bytes_to_gb(disk.total_space()); // total space
         let used_space = cv::bytes_to_gb(disk.total_space() - disk.available_space()); // used space
         let free_space = cv::bytes_to_gb(disk.available_space()); // free space
-        let used_point = cv::point_cal(used_space, total_space); // used
+        let used_point = cv::percentage_cal(used_space, total_space); // used
        
         if !name.starts_with("overlay") {
             disk_info.push((name, filesystem, mount_point, total_space, used_space,used_point, free_space)); 

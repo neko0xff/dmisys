@@ -64,14 +64,22 @@ pub struct BatteryElectronMeta {
 }
 
 #[derive(Tabled)]
+pub struct  BatteryHealthInfo {
+    pub number: String,
+    pub name: String,
+    pub life_time: String,
+    pub percentage: String
+}
+
+#[derive(Tabled)]
 pub struct DiskInfo {
     pub name: String,
     pub filesystem: String,
     pub mount_point: String,
     pub total_space: String,
     pub used_space: String,
-    pub used_percent: String,
     pub free_space: String,
+    pub used_percent: String,
 }
 
 #[derive(Tabled)]

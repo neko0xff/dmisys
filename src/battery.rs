@@ -76,7 +76,7 @@ pub fn read_bat_volt_min(bat_number: u8) -> f64 {
     let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
     let find = "POWER_SUPPLY_VOLTAGE_MIN_DESIGN=";
     let num = file::read_config_var_usize(&file, find) ;
-    let output = cv::mv_to_volts(num);
+    let output = cv::uv_to_volts(num);
 
     output
 }
@@ -86,7 +86,7 @@ pub fn read_bat_volt_now(bat_number: u8) -> f64 {
     let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
     let find = "POWER_SUPPLY_VOLTAGE_NOW=";
     let num = file::read_config_var_usize(&file, find) ;
-    let output = cv::mv_to_volts(num);
+    let output = cv::uv_to_volts(num);
 
     output
 }
@@ -96,7 +96,7 @@ pub fn read_bat_charge_now(bat_number: u8) -> f64 {
     let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
     let find = "POWER_SUPPLY_CHARGE_NOW=";
     let num = file::read_config_var_usize(&file, find);
-    let output = cv::mah_to_uah(num);
+    let output = cv::uah_to_mah(num);
 
     output
 }
@@ -106,7 +106,7 @@ pub fn read_bat_charge_full_design(bat_number: u8) -> f64 {
     let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
     let find = "POWER_SUPPLY_CHARGE_FULL_DESIGN=";
     let num = file::read_config_var_usize(&file, find);
-    let output = cv::mah_to_uah(num);
+    let output = cv::uah_to_mah(num);
 
     output
 }
@@ -166,4 +166,36 @@ pub fn read_bat_serialnum(bat_number: u8) -> String {
     output
 }
 
+pub fn read_bat_timelife(bat_number: u8) -> f64 {
+    let charge_now_uah = read_bat_charge_now(bat_number);
+    let current_now_ua = read_bat_current_now(bat_number);
+    let charge_now_mah = cv::uah_to_mah(charge_now_uah as usize);
+    let current_now_ma = cv::ua_to_ma(current_now_ua as usize);
+    let output: f64;
+
+    if current_now_ma > 0.0 {
+        output = charge_now_mah / current_now_ma;
+    } else {
+        output = 0.0;
+    }
+
+    output
+}
+
+
+pub fn read_bat_health(bat_number: u8) -> f64{
+    let charge_full_design_uah = read_bat_charge_full_design(bat_number);
+    let charge_full_uah = read_bat_charge_now(bat_number);
+    let charge_full_design_mah = cv::uah_to_mah(charge_full_design_uah as usize);
+    let charge_full_mah = cv::uah_to_mah(charge_full_uah as usize);
+    let output: f64;
+
+    if charge_full_design_mah > 0.0 {
+        output = cv::percentage_cal(charge_full_mah,charge_full_design_mah);
+    } else {
+        output = 0.0;
+    }
+
+    output
+}
 
