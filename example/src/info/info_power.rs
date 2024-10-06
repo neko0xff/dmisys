@@ -14,8 +14,7 @@ fn supply_info() {
     println!("\n{}", "Power Supply Information".green().bold());
     println!("{}", "=========================".green());
     println!("{}","Find Device:".blue().bold());
-    println!("ADP : {}", adp_count);
-    println!("BAT : {}", bat_count);
+    println!("ADP : {}, BAT: {}", adp_count, bat_count);
 
     // ADP List
     if adp_count > 0 {
