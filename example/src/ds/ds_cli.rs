@@ -10,7 +10,7 @@ pub struct Cli {
     #[arg(short, long)] 
     #[arg(default_value = "all")]
     /// Choose need output a information data!
-    /// (You can output: cpu,gpu,disk,memory,network,power,system)
+    /// (You can output: cpu,gpu,disk,memory,network,power,system,desktop,environment)
     pub output: Option<String>, 
 }
 

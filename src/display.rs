@@ -1,0 +1,58 @@
+use std::process::Command;
+use crate::cv;
+
+pub fn read_cmd_xrandr() -> Result<String, std::io::Error> {
+    let output = Command::new("xrandr")
+        .arg("--current")
+        .output()?;
+    
+    Ok(String::from_utf8_lossy(&output.stdout).to_string())
+}
+
+pub fn read_cmd_xdpyinfo() -> Result<String, std::io::Error> {
+    let output = Command::new("xdpyinfo")
+        .output()?;
+    
+    Ok(String::from_utf8_lossy(&output.stdout).to_string())
+}
+
+pub fn parse_output_xrandr(input: &str) -> Option<String> {
+    let regex_pattern = r"current (\d+) x (\d+)";
+    let output = cv::regex_extract(input, regex_pattern);
+    
+    Some(output)
+}
+
+pub fn parse_output_xdpyinfo(input: &str) -> Option<String> {
+    let regex_pattern = r"dimensions:\s+(\d+x\d+)";
+    let output = cv::regex_extract(input, regex_pattern);
+    
+    Some(output)
+}
+
+pub fn get_info_resolution() -> Option<String> {
+    if let Ok(xrandr_output) = read_cmd_xrandr() {
+        if let Some(resolution) = parse_output_xrandr(&xrandr_output) {
+            return Some(resolution);
+        }
+    }
+
+    if let Ok(xdpyinfo_output) = read_cmd_xdpyinfo() {
+        if let Some(resolution) = parse_output_xdpyinfo(&xdpyinfo_output) {
+            return Some(resolution);
+        }
+    }
+
+    None
+}
+
+pub fn read_display_resolution() -> String {
+    let output ;
+
+    match get_info_resolution() {
+        Some(resolution) => output= format!("{}", resolution),
+        None => output = format!("Unknow"),
+    }
+
+    output.to_string()
+}

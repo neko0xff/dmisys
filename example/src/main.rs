@@ -24,11 +24,17 @@ fn main() {
         info_power::output_msg();
     }else if arg_output == Some("disk"){
         info_disk::output_msg();
+    }else if arg_output == Some("environment"){
+        info_env::output_msg();
+    }else if arg_output == Some("desktop"){
+        info_desktop::output_msg();
     }
 
     // 如果未指定輸出或輸出`all`,則輸出
     if arg_output == None || arg_output == Some("all"){
         info_system::output_msg();
+        info_desktop::output_msg();
+        info_env::output_msg();
         info_network::output_msg();
         info_cpu::output_msg();
         info_gpu::output_msg();
@@ -36,7 +42,5 @@ fn main() {
         info_power::output_msg();
         info_disk::output_msg();
     }
-
     
-   
 }

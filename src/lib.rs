@@ -13,3 +13,5 @@ pub mod web;
 pub mod file;
 pub mod supply;
 pub mod battery;
+pub mod env;
+pub mod display;

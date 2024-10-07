@@ -2,6 +2,8 @@ use std::{fs,io};
 use std::path::Path;
 
 /*檢查檔案&路徑*/
+
+/// 檢查是否有檔案
 pub fn check_used_exists(path:&str) -> bool {
     let metadata = fs::metadata(path);
     let output = metadata.is_ok();
@@ -9,6 +11,7 @@ pub fn check_used_exists(path:&str) -> bool {
     output
 }
 
+/// 判定類型:  檔案,目錄,連結
 pub fn check_used_type(path: &str) -> Result<String, io::Error> {
     let metadata = fs::metadata(path)?;
     let file_type = metadata.file_type();
@@ -24,6 +27,7 @@ pub fn check_used_type(path: &str) -> Result<String, io::Error> {
     }
 }
 
+/// 判定類型:  目錄
 pub fn check_directory(dir_path: &str) -> Result<Vec<String>, io::Error> {
     let path = Path::new(dir_path);
     let mut entries = Vec::new();
@@ -44,6 +48,7 @@ pub fn check_directory(dir_path: &str) -> Result<Vec<String>, io::Error> {
     Ok(entries)
 }
 
+/// 判定類型:  目錄是否為空
 pub fn check_directory_null(dir_path: &str) -> bool {
     match check_directory(dir_path) {
         Ok(entries) => {
@@ -57,7 +62,7 @@ pub fn check_directory_null(dir_path: &str) -> bool {
     }
 }
 
-/*讀取路徑檔案 */
+/// 讀取路徑檔案 
 pub fn return_pathdata(path:&str) -> String {
     let data = fs::read_to_string(path)
         .unwrap_or_else(|_| "Unknown".to_string());
@@ -66,7 +71,7 @@ pub fn return_pathdata(path:&str) -> String {
     output
 }
 
-/*讀取設定檔*/
+/// 讀取設定檔: 全部內容
 pub fn read_config_info(file:&str) -> String {
     if let Ok(contents) = fs::read_to_string(file) {
         return contents;
@@ -75,6 +80,7 @@ pub fn read_config_info(file:&str) -> String {
     "Unknown".to_string()
 }
 
+/// 讀取設定變數: 字串 
 pub fn read_config_var_string(file:&str,find:&str) -> String {
     if let Ok(contents) = fs::read_to_string(file) {
         for line in contents.lines() {
@@ -88,6 +94,7 @@ pub fn read_config_var_string(file:&str,find:&str) -> String {
     "Unknown".to_string()
 }
 
+/// 讀取設定變數: 布林值
 pub fn read_config_var_bool(file:&str,find:&str) -> bool {
     if let Ok(contents) = fs::read_to_string(file) {
         for line in contents.lines() {
@@ -105,6 +112,7 @@ pub fn read_config_var_bool(file:&str,find:&str) -> bool {
     false
 }
 
+/// 讀取設定變數: 整數
 pub fn read_config_var_usize(file:&str,find:&str) -> usize {
     if let Ok(contents) = fs::read_to_string(file) {
         for line in contents.lines() {

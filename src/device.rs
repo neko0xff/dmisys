@@ -5,7 +5,7 @@ use std::{
 };
 use crate::cv;
 
-/*讀取PCI上的裝置*/
+/// 輸出: PCI上的裝置
 pub fn run_cmd_devicepci() -> String {
     let output = Command::new("sh")
         .arg("-c")
@@ -16,6 +16,7 @@ pub fn run_cmd_devicepci() -> String {
     String::from_utf8_lossy(&output.stdout).to_string()
 }
 
+/// 讀取: 輸出字串
 pub fn read_device_info() -> String {
     let output = run_cmd_devicepci();
 
