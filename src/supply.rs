@@ -1,5 +1,6 @@
 use crate::file;
 
+/// Read ADP information from /sys/class/power_supply/ADP\[number]\/uevent
 pub fn read_adp_info(adp_number: u8) -> String {
     let read_adp = format!("ADP{}", adp_number);
     let file = format!("/sys/class/power_supply/{}/uevent", read_adp);
@@ -8,6 +9,7 @@ pub fn read_adp_info(adp_number: u8) -> String {
     output
 }
 
+/// Read ADP device type
 pub fn read_adp_devtype(adp_number: u8) -> String {
     let read_adp = format!("ADP{}", adp_number);
     let file = format!("/sys/class/power_supply/{}/uevent", read_adp);
@@ -17,6 +19,7 @@ pub fn read_adp_devtype(adp_number: u8) -> String {
     output
 }
 
+/// Read ADP device name
 pub fn read_adp_name(adp_number: u8) -> String {
     let read_adp = format!("ADP{}", adp_number);
     let file = format!("/sys/class/power_supply/{}/uevent", read_adp);
@@ -26,6 +29,7 @@ pub fn read_adp_name(adp_number: u8) -> String {
     output
 }
 
+/// Read ADP device type
 pub fn read_adp_type(adp_number: u8) -> String {
     let read_adp = format!("ADP{}", adp_number);
     let file = format!("/sys/class/power_supply/{}/uevent", read_adp);
@@ -35,6 +39,7 @@ pub fn read_adp_type(adp_number: u8) -> String {
     output
 }
 
+/// check the ADP online status(online, offline)
 pub fn read_adp_online(adp_number: u8) -> bool {
     let read_adp = format!("ADP{}", adp_number);
     let file = format!("/sys/class/power_supply/{}/uevent", read_adp);

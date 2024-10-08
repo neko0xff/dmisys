@@ -1,7 +1,8 @@
 use std::process::Command;
 use crate::cv;
 
-pub fn read_cmd_xrandr() -> Result<String, std::io::Error> {
+/// Read the output of xrandr command and parse the resolution
+fn read_cmd_xrandr() -> Result<String, std::io::Error> {
     let output = Command::new("xrandr")
         .arg("--current")
         .output()?;
@@ -9,28 +10,29 @@ pub fn read_cmd_xrandr() -> Result<String, std::io::Error> {
     Ok(String::from_utf8_lossy(&output.stdout).to_string())
 }
 
-pub fn read_cmd_xdpyinfo() -> Result<String, std::io::Error> {
+/// Read the output of xdpyinfo command and parse the resolution
+fn read_cmd_xdpyinfo() -> Result<String, std::io::Error> {
     let output = Command::new("xdpyinfo")
         .output()?;
     
     Ok(String::from_utf8_lossy(&output.stdout).to_string())
 }
 
-pub fn parse_output_xrandr(input: &str) -> Option<String> {
+fn parse_output_xrandr(input: &str) -> Option<String> {
     let regex_pattern = r"current (\d+) x (\d+)";
     let output = cv::regex_extract(input, regex_pattern);
     
     Some(output)
 }
 
-pub fn parse_output_xdpyinfo(input: &str) -> Option<String> {
+fn parse_output_xdpyinfo(input: &str) -> Option<String> {
     let regex_pattern = r"dimensions:\s+(\d+x\d+)";
     let output = cv::regex_extract(input, regex_pattern);
     
     Some(output)
 }
 
-pub fn get_info_resolution() -> Option<String> {
+fn get_info_resolution() -> Option<String> {
     if let Ok(xrandr_output) = read_cmd_xrandr() {
         if let Some(resolution) = parse_output_xrandr(&xrandr_output) {
             return Some(resolution);
@@ -46,6 +48,7 @@ pub fn get_info_resolution() -> Option<String> {
     None
 }
 
+/// Display Resolution
 pub fn read_display_resolution() -> String {
     let output ;
 

@@ -6,7 +6,8 @@ use std::{
 use sysinfo::Disks;
 use crate::cv;
 
-pub fn run_cmd_smartdata(device:&str) -> String {
+/// read disk info
+fn run_cmd_smartdata(device:&str) -> String {
     let output = Command::new("smartctl")
         .arg("-a")
         .arg(device)
@@ -16,7 +17,8 @@ pub fn run_cmd_smartdata(device:&str) -> String {
     String::from_utf8_lossy(&output.stdout).to_string()
 }
 
-pub fn run_cmd_smartstatus(device:&str) -> String {
+/// read `samrtctl` command a data
+fn run_cmd_smartstatus(device:&str) -> String {
     let output = Command::new("smartctl")
         .arg("-H")   
         .arg(device) 
@@ -26,7 +28,7 @@ pub fn run_cmd_smartstatus(device:&str) -> String {
     String::from_utf8_lossy(&output.stdout).to_string()
 }
 
-pub fn run_cmd_smartinfo(device: &str) -> String {
+fn run_cmd_smartinfo(device: &str) -> String {
     let output = Command::new("smartctl")
         .arg("-i")
         .arg(device)
@@ -36,54 +38,63 @@ pub fn run_cmd_smartinfo(device: &str) -> String {
     String::from_utf8_lossy(&output.stdout).to_string()
 }
 
+/// read this pyhysical disk information
 pub fn read_disk_smartinfo(device: &str) -> String {
     let output = run_cmd_smartdata(device);
  
      output
  }
 
+ /// read this pyhysical disk S.M.A.R.T status
 pub fn read_disk_smartstatus(device: &str) ->  String {
     let output = run_cmd_smartstatus(device);
     let regex_pattern = r"SMART overall-health self-assessment test result:\s*(\w+)";
     cv::regex_extract(&output,regex_pattern)
 }
 
+ /// read this pyhysical disk Rotation Rate
 pub fn read_disk_rotationrate(device: &str) ->  String{
     let output = run_cmd_smartinfo(device);
     let regex_pattern = r"Rotation Rate:\s*(.+)";
     cv::regex_extract(&output, regex_pattern)
 }
 
+ /// read this pyhysical disk device model
 pub fn read_disk_devicemodel(device: &str) -> String {
     let output = run_cmd_smartinfo(device);
     let regex_pattern = r"Device Model:\s*(.+)";
     cv::regex_extract(&output, regex_pattern)
 }
 
+ /// read this pyhysical disk firmware version
 pub fn read_disk_firmware(device: &str) -> String {
     let output = run_cmd_smartinfo(device);
     let regex_pattern = r"Firmware Version:\s*(.+)";
     cv::regex_extract(&output, regex_pattern)
 }
 
+ /// read this pyhysical disk serial number
 pub fn read_disk_serial(device: &str) -> String {
     let output = run_cmd_smartinfo(device);
     let regex_pattern = r"Serial Number:\s*(.+)";
     cv::regex_extract(&output, regex_pattern)
 }
 
+ /// read this pyhysical disk factor
 pub fn read_disk_factor(device: &str) -> String { 
     let output = run_cmd_smartinfo(device);
     let regex_pattern = r"Form Factor:\s*(.+)";
     cv::regex_extract(&output, regex_pattern)
 }
 
+ /// read this pyhysical disk sata version
 pub fn read_disk_sataver(device: &str) -> String {
     let output = run_cmd_smartinfo(device);
     let regex_pattern = r"SATA Version is:\s*(.+)";
     cv::regex_extract(&output, regex_pattern)
 }
 
+ /// read this pyhysical disk total space
 pub fn read_disk_totalspace() -> (String, f64) {
     let disks = Disks::new_with_refreshed_list();
     let mut name = String::new(); 
@@ -102,6 +113,7 @@ pub fn read_disk_totalspace() -> (String, f64) {
     (name, total_space)
 }
 
+/// Read disk sector space and return as vector
 pub fn read_disk_sectorspace_vec() -> Vec<(String, Option<String>, Option<String>, f64,f64, f64, f64)> {
     let mut disk_info = Vec::new();
     let disks = Disks::new_with_refreshed_list();
@@ -123,6 +135,7 @@ pub fn read_disk_sectorspace_vec() -> Vec<(String, Option<String>, Option<String
     disk_info
 }
 
+/// Read disk sector space and return as map
 pub fn read_disk_all_vec() -> Vec<(String, f64)> {
     let mut disks_info = Vec::new();
     let block_devices_path = Path::new("/sys/block/");
@@ -153,6 +166,7 @@ pub fn read_disk_all_vec() -> Vec<(String, f64)> {
     disks_info
 }
 
+/// Read PyhysicalDrive info and return as vector 
 pub fn read_disks_pyhysicaldrive_vec() -> Vec<(String, f64)> {
     let mut disks_info = Vec::new();
     let block_devices_path = Path::new("/sys/block/");
@@ -184,6 +198,7 @@ pub fn read_disks_pyhysicaldrive_vec() -> Vec<(String, f64)> {
     disks_info
 }
 
+/// Read PyhysicalDrive info and return as list
 pub fn read_disks_physicaldrive_list() -> Vec<String> {
     let mut disks_info = Vec::new();
     let block_devices_path = Path::new("/sys/block/");

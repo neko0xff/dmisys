@@ -6,6 +6,7 @@ pub fn output_msg() {
 
     println!("\n{}", "GPU Information".green().bold());
     println!("{}", "================".green());
+    println!("\n{}", "Installed GPU Device List".blue().bold());
     if gpus.is_empty() {
         println!("No GPUs found");
     } else {

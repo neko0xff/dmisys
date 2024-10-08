@@ -84,3 +84,48 @@ BAT Health Info
 +--------+------+-----------+------------+
 
 ```
+
+## 裝置2: F2A78M-DS2
+```zsh
+➜  example git:(main) ✗ sudo ./target/release/example --output system
+System Information
+=================
+OS:             Linux 24.05 NixOS
+Distro:         NixOS
+Host Name:      Host01
+Kernel:         6.9.8-xanmod1
+Vendor:         Gigabyte Technology Co., Ltd.
+Board:          F2A78M-DS2
+Model:          To be filled by O.E.M.
+Uptime:         0 days, 1 hours, 40 minutes
+IO:             Write = 2504 MB / Read = 3658 MB
+
+BIOS Information
+=================
+Vendor:         American Megatrends Inc.
+Release:        4.6
+Version:        F6e
+Date:           05/05/2015
+
+➜  example git:(main) ✗ sudo ./target/release/example --output cpu
+
+CPU Information
+================
+CPU Model:           "AMD A8-7600 Radeon R7, 10 Compute Cores 4C+6G"
+CPU Frequency:       3.09 GHz
+CPU Core:            4
+CPU Threads:         4
+CPU Arch:            x86_64
+CPU Load Avg:        3.22%
+
+➜  example git:(main) ✗ sudo ./target/release/example --output power
+
+Power Information
+==================
+Autosuspend Delay:        Unknown ms
+Control:                  auto
+Runtime Status:           unsupported
+Runtime Active Time:      0
+Runtime Suspended Time:   0
+
+```

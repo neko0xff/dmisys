@@ -1,45 +1,45 @@
 use sysinfo::System;
 use crate::cv;
 
-/// 回傳單位: Mbyte
 pub struct Info {
     pub sys: System,
 }
 
 impl Info {
+
     pub fn new() -> Self {
         let sys = System::new_all();
         Info { sys }
     }
 
-    /// 己分配的RAM空間
+    /// total installed memory space(MB)
     pub fn total_memory(&self) -> u64 {
         cv::bytes_to_mb(self.sys.total_memory())
     }
   
-    /// 己使用的RAM空間
+    /// used installed memory space (MB)
     pub fn used_memory(&self) -> u64 {
         cv::bytes_to_mb(self.sys.used_memory())
     }
 
-    /// 計算百分比: 己使用的RAM空間
+    /// used installed memory space (percentage)
     pub fn used_memory_percent(&self) -> f64 {
-        let used_memory = self.used_memory() as f64;
-        let total_memory = self.total_memory() as f64;
+        let used = self.used_memory() as f64;
+        let total = self.total_memory() as f64;
     
-        if total_memory == 0.0 {
+        if total == 0.0 {
             0.0 
         } else {
-            (used_memory / total_memory) * 100.0
+            cv::percentage_cal(used, total)
         }
     }
     
-    /// 未使用的RAM空間
+    /// free installed memory space (MB)
     pub fn free_memory(&self) -> u64 {
         cv::bytes_to_mb(self.sys.free_memory())
     }
 
-    /// 計算百分比: 未使用的RAM空間
+    /// free installed memory space (percentage)
     pub fn free_memory_percent(&self) -> f64 {
         let free_memory = self.free_memory() as f64;
         let total_memory = self.total_memory() as f64;
@@ -47,16 +47,16 @@ impl Info {
         if total_memory == 0.0 {
             0.0 
         } else {
-            (free_memory / total_memory) * 100.0
+            cv::percentage_cal(free_memory, total_memory)
         }
     }
     
-    /// 可供於程式使用的RAM空間
+    /// available installed memory space (MB)
     pub fn available_memory(&self) -> u64 {
         cv::bytes_to_mb(self.sys.available_memory())
     }
 
-    /// 計算百分比: 可供於程式使用的RAM空間
+    /// available installed memory space (percentage)
     pub fn available_memory_percent(&self) -> f64 {
         let available_memory = self.available_memory() as f64;
         let total_memory = self.total_memory() as f64;
@@ -64,21 +64,21 @@ impl Info {
         if total_memory == 0.0 {
             0.0 
         } else {
-            (available_memory / total_memory) * 100.0
+            cv::percentage_cal(available_memory, total_memory)
         }
     }
     
-    /// 己分配的暫存交換區空間
+    /// total swap space (MB)
     pub fn total_swap(&self) -> u64 {
         cv::bytes_to_mb(self.sys.total_swap())
     }
 
-    /// 未使用的暫存交換區空間
+    /// Free swap space
     pub fn free_swap(&self) -> u64 {
         cv::bytes_to_mb(self.sys.free_swap())
     }
 
-    /// 計算百分比: 未使用的暫存交換區空間
+    /// Free swap space (percentage)
     pub fn free_swap_percent(&self) -> f64 {
         let free_swap = self.free_swap() as f64;
         let total_swap = self.total_swap() as f64;
@@ -86,24 +86,24 @@ impl Info {
         if total_swap == 0.0 {
             0.0
         } else {
-            (free_swap / total_swap) * 100.0
+            cv::percentage_cal(free_swap, total_swap)
         }
     }
 
-    /// 己使用的暫存交換區空間
+    /// Used a swap space
     pub fn used_swap(&self) -> u64 {
         cv::bytes_to_mb(self.sys.used_swap())
     }
 
-    /// 計算百分比: 己使用的暫存交換區空間
+    /// Used a swap space (percentage)
     pub fn used_swap_percent(&self) -> f64 {
-        let used_swap = self.used_swap() as f64;
-        let total_swap = self.total_swap() as f64;
+        let used = self.used_swap() as f64;
+        let total = self.total_swap() as f64;
     
-        if total_swap == 0.0 {
+        if total == 0.0 {
             0.0
         } else {
-            (used_swap / total_swap) * 100.0
+            cv::percentage_cal(used, total)
         }
     }
 }

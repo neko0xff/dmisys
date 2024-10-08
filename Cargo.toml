@@ -2,6 +2,13 @@
 name = "dmisys"
 version = "0.1.0"
 edition = "2021"
+authors = ["neko_0xff <neko_0xff@protonmail.com>"]
+description = "This is a specialized library designed to output the hardware configuration required by the system, as well as various status information of the current device."
+repository = "https://github.com/neko0xff/dmisys"
+documentation = "https://docs.rs/dmisys"
+categories = ["command-line-utilities"]
+license = "GPL-2.0-or-later"
+keywords = ["system", "infomation","linux","hardware"]
 
 [dependencies]
 get_if_addrs = "0.5.3"

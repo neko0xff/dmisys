@@ -5,8 +5,8 @@ use std::{
 };
 use crate::cv;
 
-/// 輸出: PCI上的裝置
-pub fn run_cmd_devicepci() -> String {
+/// use command get PCI device list 
+fn run_cmd_devicepci() -> String {
     let output = Command::new("sh")
         .arg("-c")
         .arg("lspci")
@@ -16,13 +16,14 @@ pub fn run_cmd_devicepci() -> String {
     String::from_utf8_lossy(&output.stdout).to_string()
 }
 
-/// 讀取: 輸出字串
+/// Read use `lspci` a  PCI Device List
 pub fn read_device_info() -> String {
     let output = run_cmd_devicepci();
 
     output
 }
 
+/// Read Installed GPU Device List
 pub fn read_device_gpu() -> Vec<String> {
     let input = read_device_info();
     let regex_pattern =  r"VGA compatible controller:\s*(.+)";
@@ -31,6 +32,7 @@ pub fn read_device_gpu() -> Vec<String> {
     output
 }
 
+/// Find choose a Devices Counts
 pub fn find_devices_counts(device_type: &str) -> Vec<usize> {
     let mut devices = Vec::new();
     let hwmon_dir = Path::new("/sys/class/hwmon");
@@ -53,6 +55,7 @@ pub fn find_devices_counts(device_type: &str) -> Vec<usize> {
     devices
 }
 
+/// Read Power Supply Device Counts
 pub fn read_adp_counts() -> usize {
     let power_supply_dir = "/sys/class/power_supply/";
     let mut count = 0;
@@ -71,6 +74,8 @@ pub fn read_adp_counts() -> usize {
     count
 }
 
+
+/// Read Battery Device Counts
 pub fn read_bat_counts() -> usize {
     let power_supply_dir = "/sys/class/power_supply/";
     let mut count = 0;

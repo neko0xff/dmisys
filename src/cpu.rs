@@ -4,6 +4,7 @@ use std::{
 };
 use sysinfo::System;
 
+/// CPU Model
 pub fn read_cpu_model() -> String {
     let info_path = "/proc/cpuinfo";
 
@@ -27,6 +28,7 @@ pub fn read_cpu_model() -> String {
     "Unknown".to_string()
 }
 
+/// CPU Cores
 pub fn read_cpu_cores() -> u64 {
     let info_path = "/proc/cpuinfo";
 
@@ -50,6 +52,7 @@ pub fn read_cpu_cores() -> u64 {
     0
 }
 
+/// CPU Threads
 pub fn read_cpu_threads() -> u64 {
     let info_path = "/proc/cpuinfo";
 
@@ -73,6 +76,7 @@ pub fn read_cpu_threads() -> u64 {
     0
 }
 
+/// CPU Frequency (MHz)
 pub fn get_cpu_frequency() -> f64 {
     let info_path = "/proc/cpuinfo";
     
@@ -97,14 +101,15 @@ pub fn get_cpu_frequency() -> f64 {
     0.0
 }
 
+/// CPU Load Average (1 minutes)
 pub fn get_cpu_loading() -> f64 {
-    // 回傳部分: 讀取1分鐘內的系統負戴值
     let read_cpu_loading = System::load_average();
     let output = read_cpu_loading.one; 
 
     output
 }
 
+/// CPU Architecture
 pub fn read_cpu_arch() -> String {
     let output = System::cpu_arch()
             .unwrap_or_else(|| "Unknown".to_string());

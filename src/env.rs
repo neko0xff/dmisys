@@ -3,8 +3,8 @@ use std::{
     process::Command
 };
 
-/// 讀取:  Shell Version
-pub fn read_cmd_shellver() ->String{
+/// Read Command: Use a Shell Version
+fn read_cmd_shellver() ->String{
     let input = read_env_shell();
     
     let output = match input.as_str() {
@@ -38,14 +38,14 @@ pub fn read_cmd_shellver() ->String{
         .to_string()
 }
 
-/// Output: Shell Version
+/// Use a Shell Version
 pub fn read_env_shellver() -> String {
     let output = read_cmd_shellver();
 
     output
 }
 
-/// 讀取: 現在的環境變數
+/// read now Environment value
 pub fn read_env_var(key: String) -> String {
     let output: String;
     let key_var = env::var(&key);
@@ -59,7 +59,7 @@ pub fn read_env_var(key: String) -> String {
     output
 }
 
-/// Output: 當前使用者家目錄
+/// User Home Directory
 pub fn read_env_homedirectory() -> String {
     let find = "HOME";
     let output = read_env_var(find.to_string());
@@ -67,7 +67,7 @@ pub fn read_env_homedirectory() -> String {
     output
 }
 
-/// Output: 當前使用者名稱
+/// Login User name
 pub fn read_env_loginuser() -> String {
     let find = "LOGNAME";
     let output = read_env_var(find.to_string());
@@ -75,7 +75,7 @@ pub fn read_env_loginuser() -> String {
     output
 }
 
-/// Output: 當前使用者名稱
+/// User name
 pub fn read_env_user() -> String {
     let find = "USER";
     let output = read_env_var(find.to_string());
@@ -83,7 +83,7 @@ pub fn read_env_user() -> String {
     output
 }
 
-/// Output: Use Shell
+/// Use a Shell
 pub fn read_env_shell() -> String {
     let find = "SHELL";
     let output = read_env_var(find.to_string());
@@ -91,7 +91,7 @@ pub fn read_env_shell() -> String {
     output
 }
 
-/// Output: 當前使用者的語言環境
+/// Language
 pub fn read_env_lang() -> String {
     let find = "LANG";
     let output = read_env_var(find.to_string());
@@ -99,7 +99,7 @@ pub fn read_env_lang() -> String {
     output
 }
 
-/// Output: 當前使用者的桌面環境
+/// Login Session
 pub fn read_env_desktopsession() -> String {
     let find = "DESKTOP_SESSION";
     let output = read_env_var(find.to_string());
@@ -107,7 +107,7 @@ pub fn read_env_desktopsession() -> String {
     output
 }
 
-/// Output: 顯示環境
+/// Display Server
 pub fn read_env_displayserver() -> String {
     let find = "XDG_SESSION_TYPE";
     let output = read_env_var(find.to_string());
@@ -115,6 +115,7 @@ pub fn read_env_displayserver() -> String {
     output
 }
 
+/// Desktop Environment
 pub fn read_env_displayde_session() -> String {
     let find = "XDG_SESSION_DESKTOP";
     let output = read_env_var(find.to_string());
@@ -122,6 +123,7 @@ pub fn read_env_displayde_session() -> String {
     output
 }
 
+/// Desktop Environment
 pub fn read_env_displayde_current() -> String {
     let find = "XDG_CURRENT_DESKTOP";
     let output = read_env_var(find.to_string());
@@ -129,7 +131,7 @@ pub fn read_env_displayde_current() -> String {
     output
 }
 
-/// 輸入法
+/// Input Method
 pub fn read_env_inputmethod() -> String {
     let find = "XMODIFIERS=@im";
     let output = read_env_var(find.to_string());
@@ -137,7 +139,7 @@ pub fn read_env_inputmethod() -> String {
     output
 }
 
-/// 當前目錄: 現在
+///  Working directory: now
 pub fn read_env_nowpwd() -> String {
     let find = "PWD";
     let output = read_env_var(find.to_string());
@@ -145,7 +147,7 @@ pub fn read_env_nowpwd() -> String {
     output
 }
 
-/// 當前目錄: 上一回
+///  Working directory: old
 pub fn read_env_oldpwd() -> String {
     let find = "OLDPWD";
     let output = read_env_var(find.to_string());

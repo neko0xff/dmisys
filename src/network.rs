@@ -6,33 +6,40 @@ use std::{
 use get_if_addrs::get_if_addrs;
 use sysinfo::Networks;
 
-pub fn get_public_ipv4() -> Result<Option<String>, Box<dyn Error>> {
+
+fn get_public_ipv4() -> Result<Option<String>, Box<dyn Error>> {
     let url = "https://api.ipify.org";
     web::cn_server_get(url)
 }
 
-pub fn get_public_ipv6() -> Result<Option<String>, Box<dyn Error>> {
+
+fn get_public_ipv6() -> Result<Option<String>, Box<dyn Error>> {
     let url = "https://api6.ipify.org";
     web::cn_server_get(url)
 }
 
-pub fn get_public_ipv64() -> Result<Option<String>, Box<dyn Error>> {
+
+fn get_public_ipv64() -> Result<Option<String>, Box<dyn Error>> {
     let url = "https://api64.ipify.org";
     web::cn_server_get(url)
 }
 
+/// Get Public IPv4 address
 pub fn get_public_ipv4_address() -> String {
     cv::format_msg(get_public_ipv4())
 }
 
+/// Get Public IPv6 address
 pub fn get_public_ipv6_address() -> String {
     cv::format_msg(get_public_ipv6())
 }
 
+/// Get Public IPv4 or IPv4 address
 pub fn get_public_ipv64_address() -> String {
     cv::format_msg(get_public_ipv64())
 }
 
+/// Get Local IPv4 & IPv6 address
 pub fn get_local_ipv64() -> Vec<(String, String,String)> {
     let if_addrs = get_if_addrs().unwrap();
     let mut ip_info = Vec::new();
@@ -61,6 +68,7 @@ pub fn get_local_ipv64() -> Vec<(String, String,String)> {
     ip_info
 }
 
+/// Get now network interfaces a Upload & Download speed
 pub fn get_speed() -> Vec<(String, f64, f64)> {
     let if_addrs = get_if_addrs().unwrap();
     let networks = Networks::new_with_refreshed_list();
@@ -83,6 +91,7 @@ pub fn get_speed() -> Vec<(String, f64, f64)> {
     speed_info
 }
 
+/// Get MAC address of network interfaces
 pub fn get_macaddress() -> Vec<(String, String)> {
     let mut mac_info = Vec::new();
     let networks = Networks::new_with_refreshed_list();
