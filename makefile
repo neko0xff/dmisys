@@ -6,6 +6,9 @@ CC3:=cargo-clippy
 
 all: version clean build_doc
 
+clean:
+	@$(CC1) clean
+
 build_doc:
 	@$(CC1) doc --open
 
@@ -13,18 +16,18 @@ upload_crateio:
 	@$(CC1) publish --allow-dirty
 
 format:
-	@$(CC1)  fmt --quiet
+	@$(CC1) fmt --quiet
 
 format-check:
-	@$(CC2)  component add rustfmt 2> /dev/null
-	@$(CC1)  fmt --all -- --check
+	@$(CC2) component add rustfmt 2> /dev/null
+	@$(CC1) fmt --all -- --check
 
 lint:
-	@$(CC2)  component add clippy 2> /dev/null
+	@$(CC2) component add clippy 2> /dev/null
 	@$(CC3) --all-targets --all-features -- -D warnings 
 
 test:
-	@$(CC1)  test 
+	@$(CC1) test
 	
 version:
 	@echo ""
