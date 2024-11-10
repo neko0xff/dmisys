@@ -1,6 +1,6 @@
 use crate::ds::ds_table::*;
-use dmisys::*;
 use colored::*;
+use dmisys::*;
 use tabled::Table;
 
 fn supply_info() {
@@ -13,17 +13,21 @@ fn supply_info() {
 
     println!("\n{}", "Power Supply Information".green().bold());
     println!("{}", "=========================".green());
-    println!("{}","Find Device:".blue().bold());
+    println!("{}", "Find Device:".blue().bold());
     println!("ADP : {}, BAT: {}", adp_count, bat_count);
 
     // ADP List
     if adp_count > 0 {
-        println!("\n{}","ADP List".blue().bold());
+        println!("\n{}", "ADP List".blue().bold());
         for adp_number in 1..=adp_count {
             let num = adp_number as u8;
             let name = supply::read_adp_name(num);
             let type_ = supply::read_adp_type(num);
-            let online = if supply::read_adp_online(num) { "Yes" } else { "No" };
+            let online = if supply::read_adp_online(num) {
+                "Yes"
+            } else {
+                "No"
+            };
 
             power_supplies.push(PowerSupplyInfo {
                 number: adp_number.to_string(),
@@ -42,7 +46,7 @@ fn supply_info() {
 
     // BAT Info
     if bat_count > 0 {
-        println!("\n{}","BAT Info".blue().bold());
+        println!("\n{}", "BAT Info".blue().bold());
         for bat_number in 1..=bat_count {
             let num = bat_number as u8;
             let name = battery::read_bat_name(num);
@@ -53,7 +57,11 @@ fn supply_info() {
             let model = battery::read_bat_model(num);
             let serialnum = battery::read_bat_serialnum(num);
             let manufacturer = battery::read_bat_manufacturer(num);
-            let present_str = if battery::read_bat_present(num) { "Yes" } else { "No" };
+            let present_str = if battery::read_bat_present(num) {
+                "Yes"
+            } else {
+                "No"
+            };
             let technology = battery::read_bat_technology(num);
 
             battery_list.push(BatteryInfo {
@@ -78,7 +86,7 @@ fn supply_info() {
         }
 
         // BAT Electron Info
-        println!("\n{}","BAT Electron Info".blue().bold());
+        println!("\n{}", "BAT Electron Info".blue().bold());
         for bat_number in 1..=bat_count {
             let num = bat_number as u8;
             let name = battery::read_bat_name(num);
@@ -108,7 +116,7 @@ fn supply_info() {
         }
 
         // BAT Health Info
-        println!("\n{}","BAT Health Info".blue().bold());
+        println!("\n{}", "BAT Health Info".blue().bold());
         for bat_number in 1..=bat_count {
             let num = bat_number as u8;
             let name = battery::read_bat_name(num);
@@ -118,8 +126,8 @@ fn supply_info() {
             battery_health.push(BatteryHealthInfo {
                 number: bat_number.to_string(),
                 name,
-                percentage: format!("{:.2}",health_per).to_string(),
-                life_time: format!("{:.2}",life_time_use).to_string(),
+                percentage: format!("{:.2}", health_per).to_string(),
+                life_time: format!("{:.2}", life_time_use).to_string(),
             });
         }
 
@@ -134,11 +142,27 @@ fn supply_info() {
 pub fn output_msg() {
     println!("\n{}", "Power Information".green().bold());
     println!("{}", "==================".green());
-    println!("{:<25} {} ms", "Autosuspend Delay:".blue().bold(), power::read_autosuspend_delay_ms());
+    println!(
+        "{:<25} {} ms",
+        "Autosuspend Delay:".blue().bold(),
+        power::read_autosuspend_delay_ms()
+    );
     println!("{:<25} {}", "Control:".blue().bold(), power::read_control());
-    println!("{:<25} {}", "Runtime Status:".blue().bold(), power::read_runtime_status());
-    println!("{:<25} {}", "Runtime Active Time:".blue().bold(), power::read_runtime_active_time());
-    println!("{:<25} {}", "Runtime Suspended Time:".blue().bold(), power::read_runtime_suspended_time());
+    println!(
+        "{:<25} {}",
+        "Runtime Status:".blue().bold(),
+        power::read_runtime_status()
+    );
+    println!(
+        "{:<25} {}",
+        "Runtime Active Time:".blue().bold(),
+        power::read_runtime_active_time()
+    );
+    println!(
+        "{:<25} {}",
+        "Runtime Suspended Time:".blue().bold(),
+        power::read_runtime_suspended_time()
+    );
 
     if !file::check_directory_null("/sys/class/power_supply/") {
         supply_info();

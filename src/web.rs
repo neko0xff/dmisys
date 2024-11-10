@@ -1,5 +1,5 @@
-use std::error::Error;
 use isahc::prelude::*;
+use std::error::Error;
 
 /// Get response Data from HTTP WebServer
 pub fn cn_server_get(server_url: &str) -> Result<Option<String>, Box<dyn Error>> {
@@ -12,9 +12,6 @@ pub fn cn_server_get(server_url: &str) -> Result<Option<String>, Box<dyn Error>>
                 Ok(None)
             }
         }
-        Err(_e) => {
-            Ok(None) 
-        }
+        Err(_e) => Ok(None),
     }
 }
-

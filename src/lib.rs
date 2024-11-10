@@ -1,10 +1,10 @@
 /*!
 
-This is a specialized library designed to output the hardware configuration required by the system, 
-as well as various status information of the current device. 
+This is a specialized library designed to output the hardware configuration required by the system,
+as well as various status information of the current device.
 
-Specifically, it can provide crucial metrics such as network upload and download speeds, local IP address, and public IP address. This information is essential for monitoring system performance, 
-troubleshooting issues, 
+Specifically, it can provide crucial metrics such as network upload and download speeds, local IP address, and public IP address. This information is essential for monitoring system performance,
+troubleshooting issues,
 and optimizing the network environment.
 
 # Example:  CPU Information
@@ -47,20 +47,21 @@ pub fn output_msg() {
 
  */
 
-pub mod os;
-pub mod systime;
-pub mod power;
+pub mod battery;
 pub mod bios;
 pub mod cpu;
-pub mod device;
-pub mod disk;
-pub mod host;
-pub mod network;
-pub mod memory;
 pub mod cv;
-pub mod web;
-pub mod file;
-pub mod supply;
-pub mod battery;
-pub mod env;
+pub mod device;
+pub mod devtools;
+pub mod disk;
 pub mod display;
+pub mod env;
+pub mod file;
+pub mod host;
+pub mod memory;
+pub mod network;
+pub mod os;
+pub mod power;
+pub mod supply;
+pub mod systime;
+pub mod web;

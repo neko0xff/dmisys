@@ -1,5 +1,5 @@
-use dmisys::*;
 use colored::*;
+use dmisys::*;
 
 pub fn output_msg() {
     let gpus = device::read_device_gpu();

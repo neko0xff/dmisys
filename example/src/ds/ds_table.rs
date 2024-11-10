@@ -36,7 +36,7 @@ pub struct PowerSupplyInfo {
 }
 
 #[derive(Tabled)]
-pub struct BatteryInfo{
+pub struct BatteryInfo {
     pub number: String,
     pub name: String,
     //pub dev_type: String,
@@ -47,8 +47,8 @@ pub struct BatteryInfo{
     pub capacity: usize,
     pub capacity_lv: String,
     pub model: String,
-    pub manufacturer:String,
-    pub serialnum: String
+    pub manufacturer: String,
+    pub serialnum: String,
 }
 
 #[derive(Tabled)]
@@ -64,11 +64,11 @@ pub struct BatteryElectronMeta {
 }
 
 #[derive(Tabled)]
-pub struct  BatteryHealthInfo {
+pub struct BatteryHealthInfo {
     pub number: String,
     pub name: String,
     pub life_time: String,
-    pub percentage: String
+    pub percentage: String,
 }
 
 #[derive(Tabled)]

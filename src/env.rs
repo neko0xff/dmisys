@@ -1,36 +1,25 @@
-use std::{
-    env,
-    process::Command
-};
+use std::{env, process::Command};
 
 /// Read Command: Use a Shell Version
-fn read_cmd_shellver() ->String{
+pub fn read_cmd_shellver() -> String {
     let input = read_env_shell();
-    
+
     let output = match input.as_str() {
-        "/usr/bin/zsh" => {
-            Command::new("zsh")
-                .arg("--version")
-                .output()
-                .expect("Failed")
-        },
-        "/usr/bin/bash" => {
-            Command::new("bash")
-                .arg("--version")
-                .output()
-                .expect("Failed")
-        },
-        "/usr/bin/fish" => {
-            Command::new("fish")
-                    .arg("--version")
-                    .output()
-                    .expect("Failed")
-        },
-        _ => {
-            return "Failed".to_string()
-        }
+        "/usr/bin/zsh" => Command::new("zsh")
+            .arg("--version")
+            .output()
+            .expect("Failed"),
+        "/usr/bin/bash" => Command::new("bash")
+            .arg("--version")
+            .output()
+            .expect("Failed"),
+        "/usr/bin/fish" => Command::new("fish")
+            .arg("--version")
+            .output()
+            .expect("Failed"),
+        _ => return "Failed".to_string(),
     };
-    
+
     String::from_utf8_lossy(&output.stdout)
         .split_whitespace()
         .nth(1)
@@ -52,7 +41,7 @@ pub fn read_env_var(key: String) -> String {
 
     if let Ok(value) = key_var {
         output = value;
-    }else{
+    } else {
         output = "Unknown".to_string();
     }
 
@@ -156,7 +145,7 @@ pub fn read_env_oldpwd() -> String {
 }
 
 /// Chrome Path
-pub fn read_env_chromepath() -> String{
+pub fn read_env_chromepath() -> String {
     let find = "CHROME_EXECUTABLE";
     let output = read_env_var(find.to_string());
 

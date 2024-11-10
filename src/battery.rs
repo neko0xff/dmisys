@@ -84,7 +84,7 @@ pub fn read_bat_volt_min(bat_number: u8) -> f64 {
     let read_bat = format!("BAT{}", bat_number);
     let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
     let find = "POWER_SUPPLY_VOLTAGE_MIN_DESIGN=";
-    let num = file::read_config_var_usize(&file, find) ;
+    let num = file::read_config_var_usize(&file, find);
     let output = cv::uv_to_volts(num);
 
     output
@@ -95,7 +95,7 @@ pub fn read_bat_volt_now(bat_number: u8) -> f64 {
     let read_bat = format!("BAT{}", bat_number);
     let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
     let find = "POWER_SUPPLY_VOLTAGE_NOW=";
-    let num = file::read_config_var_usize(&file, find) ;
+    let num = file::read_config_var_usize(&file, find);
     let output = cv::uv_to_volts(num);
 
     output
@@ -202,7 +202,7 @@ pub fn read_bat_timelife(bat_number: u8) -> f64 {
 }
 
 /// check the battery health percentage
-pub fn read_bat_health(bat_number: u8) -> f64{
+pub fn read_bat_health(bat_number: u8) -> f64 {
     let charge_full_design_uah = read_bat_charge_full_design(bat_number);
     let charge_full_uah = read_bat_charge_now(bat_number);
     let charge_full_design_mah = cv::uah_to_mah(charge_full_design_uah as usize);
@@ -210,11 +210,10 @@ pub fn read_bat_health(bat_number: u8) -> f64{
     let output: f64;
 
     if charge_full_design_mah > 0.0 {
-        output = cv::percentage_cal(charge_full_mah,charge_full_design_mah);
+        output = cv::percentage_cal(charge_full_mah, charge_full_design_mah);
     } else {
         output = 0.0;
     }
 
     output
 }
-
