@@ -37,6 +37,24 @@ fn read_cmd_deno() -> String {
     String::from_utf8_lossy(&output.stdout).to_string()
 }
 
+fn read_cmd_golang() -> String {
+    let output = Command::new("go")
+        .arg("version")
+        .output()
+        .expect("Failed find");
+
+    String::from_utf8_lossy(&output.stdout).to_string()
+}
+
+fn read_cmd_firefox() -> String {
+    let output = Command::new("firefox")
+        .arg("--version")
+        .output()
+        .expect("Failed find");
+
+    String::from_utf8_lossy(&output.stdout).to_string()
+}
+
 fn read_cmd_rustc() -> String {
     let output = Command::new("rustc")
         .arg("--version")
@@ -85,15 +103,25 @@ fn read_cmd_rustup() -> String {
 /// node Version
 pub fn read_ver_node() -> String {
     let output = read_cmd_node();
+    let regex_pattern = r"v(\d+\.\d+\.\d+)";
 
-    output
+    cv::regex_extract(&output, regex_pattern)
 }
 
 /// npm Version
 pub fn read_ver_npm() -> String {
     let output = read_cmd_npm();
+    let regex_pattern = r"(\d+\.\d+\.\d+)";
 
-    output
+    cv::regex_extract(&output, regex_pattern)
+}
+
+/// yarn Version
+pub fn read_ver_yarn() -> String {
+    let output = read_cmd_yarn();
+    let regex_pattern = r"(\d+\.\d+\.\d+)";
+
+    cv::regex_extract(&output, regex_pattern)
 }
 
 /// deno Version
@@ -104,17 +132,18 @@ pub fn read_ver_deno() -> String {
     cv::regex_extract(&output, regex_pattern)
 }
 
-/// yarn Version
-pub fn read_ver_yarn() -> String {
-    let output = read_cmd_yarn();
+/// Go-lang Version
+pub fn read_ver_golang() -> String {
+    let output = read_cmd_golang();
+    let regex_pattern = r"go(\d+\.\d+\.\d+)";
 
-    output
+    cv::regex_extract(&output, regex_pattern)
 }
 
-/// deno Version
-pub fn read_ver_rustc() -> String {
-    let output = read_cmd_deno();
-    let regex_pattern = r"(?m)deno (\d+\.\d+\.\d+\s\([^)]+\))";
+/// Firefox Version
+pub fn read_ver_firefox() -> String {
+    let output = read_cmd_firefox();
+    let regex_pattern = r"Firefox (\d+\.\d+\.\d+)";
 
     cv::regex_extract(&output, regex_pattern)
 }

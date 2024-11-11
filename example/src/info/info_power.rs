@@ -38,7 +38,7 @@ fn supply_info() {
         }
 
         if !power_supplies.is_empty() {
-            println!("{}", Table::new(power_supplies).to_string());
+            println!("{}", Table::new(power_supplies));
         } else {
             println!("No power supply devices found.");
         }
@@ -80,7 +80,7 @@ fn supply_info() {
         }
 
         if !battery_list.is_empty() {
-            println!("{}", Table::new(battery_list).to_string());
+            println!("{}", Table::new(battery_list));
         } else {
             println!("No Battery devices found.");
         }
@@ -110,7 +110,7 @@ fn supply_info() {
         }
 
         if !battery_meta.is_empty() {
-            println!("{}", Table::new(battery_meta).to_string());
+            println!("{}", Table::new(battery_meta));
         } else {
             println!("No Battery electron data found.");
         }
@@ -132,7 +132,7 @@ fn supply_info() {
         }
 
         if !battery_health.is_empty() {
-            println!("{}", Table::new(battery_health).to_string());
+            println!("{}", Table::new(battery_health));
         } else {
             println!("No Battery health data found.");
         }

@@ -36,9 +36,9 @@ fn run_cmd_smartinfo(device: &str) -> String {
 
 /// read this pyhysical disk information
 pub fn read_disk_smartinfo(device: &str) -> String {
-    let output = run_cmd_smartdata(device);
+    
 
-    output
+    run_cmd_smartdata(device)
 }
 
 /// read this pyhysical disk S.M.A.R.T status
@@ -96,7 +96,7 @@ pub fn read_disk_totalspace() -> (String, f64) {
     let mut name = String::new();
     let mut total_space = 0.0;
 
-    disks.list().into_iter().for_each(|disk| {
+    disks.list().iter().for_each(|disk| {
         name = disk.name().to_string_lossy().to_string();
         total_space = cv::bytes_to_gb(disk.total_space());
     });
@@ -154,7 +154,7 @@ pub fn read_disk_all_vec() -> Vec<(String, f64)> {
                     let size_path = block_devices_path.join(&device_name).join("size");
                     if let Ok(size_str) = fs::read_to_string(size_path) {
                         if let Ok(sectors) = size_str.trim().parse::<u64>() {
-                            let device_name_str = format!("{}", device_name);
+                            let device_name_str = device_name.to_string();
                             let total_size_gb = cv::sectors_to_gb(sectors);
                             disks_info.push((device_name_str, total_size_gb));
                         }

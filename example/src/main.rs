@@ -39,7 +39,7 @@ fn main() {
     }
 
     // 如果未指定輸出或輸出`all`,則輸出
-    if arg_output == None || arg_output == Some("all") {
+    if arg_output.is_none() || arg_output == Some("all") {
         info_system::output_msg();
         info_desktop::output_msg();
         info_env::output_msg();

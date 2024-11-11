@@ -14,18 +14,18 @@ fn run_cmd_devicepci() -> String {
 
 /// Read use `lspci` a  PCI Device List
 pub fn read_device_info() -> String {
-    let output = run_cmd_devicepci();
+    
 
-    output
+    run_cmd_devicepci()
 }
 
 /// Read Installed GPU Device List
 pub fn read_device_gpu() -> Vec<String> {
     let input = read_device_info();
     let regex_pattern = r"VGA compatible controller:\s*(.+)";
-    let output = cv::regex_extract_vec(&input, regex_pattern);
+    
 
-    output
+    cv::regex_extract_vec(&input, regex_pattern)
 }
 
 /// Find choose a Devices Counts

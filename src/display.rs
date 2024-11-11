@@ -50,8 +50,8 @@ pub fn read_display_resolution() -> String {
     let output;
 
     match get_info_resolution() {
-        Some(resolution) => output = format!("{}", resolution),
-        None => output = format!("Unknow"),
+        Some(resolution) => output = resolution.to_string(),
+        None => output = "Unknow".to_string(),
     }
 
     output.to_string()

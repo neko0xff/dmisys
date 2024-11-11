@@ -7,5 +7,5 @@ pub fn time_cli() {
 
     println!("Date: {}", date_format);
     println!("Time: {}", time_format);
-    println!("");
+    println!();
 }

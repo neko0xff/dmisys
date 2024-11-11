@@ -27,7 +27,7 @@ pub fn output_msg() {
             },
         )
         .collect();
-    println!("{}", Table::new(disk_info).to_string());
+    println!("{}", Table::new(disk_info));
 
     println!("\n{}", "All Disks:".blue().bold());
     let mut disk_all_list = Vec::new();
@@ -37,12 +37,12 @@ pub fn output_msg() {
             total_space: format!("{:.2} GB", total_space),
         })
     }
-    println!("{}", Table::new(disk_all_list).to_string());
+    println!("{}", Table::new(disk_all_list));
 
     println!("\n{}", "smartctl:".blue().bold());
     let mut disk_details = Vec::new();
     for name in disk_list {
-        let path = format!("{}", name);
+        let path = name.to_string();
         disk_details.push(DiskDetails {
             path: path.clone(),
             status: disk::read_disk_smartstatus(&path),
@@ -54,5 +54,5 @@ pub fn output_msg() {
             rotation_rate: disk::read_disk_rotationrate(&path),
         });
     }
-    println!("{}", Table::new(disk_details).to_string());
+    println!("{}", Table::new(disk_details));
 }

@@ -4,9 +4,9 @@ use std::{fs, io};
 /// check this directory is file
 pub fn check_used_exists(path: &str) -> bool {
     let metadata = fs::metadata(path);
-    let output = metadata.is_ok();
+    
 
-    output
+    metadata.is_ok()
 }
 
 /// check this file type
@@ -31,7 +31,7 @@ pub fn check_directory(dir_path: &str) -> Result<Vec<String>, io::Error> {
     let mut entries = Vec::new();
 
     if !path.exists() || !path.is_dir() {
-        return Err(io::Error::new(io::ErrorKind::NotFound, format!("Unkown")));
+        return Err(io::Error::new(io::ErrorKind::NotFound, "Unkown".to_string()));
     }
 
     for entry in fs::read_dir(path)? {
@@ -47,20 +47,16 @@ pub fn check_directory(dir_path: &str) -> Result<Vec<String>, io::Error> {
 pub fn check_directory_null(dir_path: &str) -> bool {
     match check_directory(dir_path) {
         Ok(entries) => {
-            if entries.is_empty() {
-                return true;
-            } else {
-                return false;
-            }
+            entries.is_empty()
         }
-        Err(_e) => return false,
+        Err(_e) => false,
     }
 }
 
 /// read & return path a file data
 pub fn return_pathdata(path: &str) -> String {
     let data = fs::read_to_string(path).unwrap_or_else(|_| "Unknown".to_string());
-    let output = format!("{}", data.trim());
+    let output = data.trim().to_string();
 
     output
 }

@@ -34,7 +34,7 @@ pub fn output_msg() {
                 ipv6: ipv6.to_string(),
             })
             .collect();
-        println!("{}", Table::new(network_info).to_string());
+        println!("{}", Table::new(network_info));
     }
 
     println!("\n{}", "Network Speed:".blue().bold());
@@ -49,7 +49,7 @@ pub fn output_msg() {
                 rx_speed: format!("{} Mb", rx),
             })
             .collect();
-        println!("{}", Table::new(speed_info).to_string());
+        println!("{}", Table::new(speed_info));
     }
 
     println!("\n{}", "Mac Address:".blue().bold());
@@ -63,6 +63,6 @@ pub fn output_msg() {
                 mac: mac.to_string(),
             })
             .collect();
-        println!("{}", Table::new(mac_info).to_string());
+        println!("{}", Table::new(mac_info));
     }
 }

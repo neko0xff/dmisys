@@ -5,6 +5,12 @@ pub struct Info {
     pub sys: System,
 }
 
+impl Default for Info {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Info {
     pub fn new() -> Self {
         let sys = System::new_all();

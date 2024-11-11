@@ -28,6 +28,6 @@ pub fn output_msg() {
     println!(
         "{:<20} {}%",
         "CPU Load Avg:".blue().bold(),
-        cpu::get_cpu_loading().to_string()
+        cpu::get_cpu_loading()
     );
 }
