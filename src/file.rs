@@ -4,7 +4,6 @@ use std::{fs, io};
 /// check this directory is file
 pub fn check_used_exists(path: &str) -> bool {
     let metadata = fs::metadata(path);
-    
 
     metadata.is_ok()
 }
@@ -31,7 +30,10 @@ pub fn check_directory(dir_path: &str) -> Result<Vec<String>, io::Error> {
     let mut entries = Vec::new();
 
     if !path.exists() || !path.is_dir() {
-        return Err(io::Error::new(io::ErrorKind::NotFound, "Unkown".to_string()));
+        return Err(io::Error::new(
+            io::ErrorKind::NotFound,
+            "Unkown".to_string(),
+        ));
     }
 
     for entry in fs::read_dir(path)? {
@@ -46,9 +48,7 @@ pub fn check_directory(dir_path: &str) -> Result<Vec<String>, io::Error> {
 /// check directory is null
 pub fn check_directory_null(dir_path: &str) -> bool {
     match check_directory(dir_path) {
-        Ok(entries) => {
-            entries.is_empty()
-        }
+        Ok(entries) => entries.is_empty(),
         Err(_e) => false,
     }
 }

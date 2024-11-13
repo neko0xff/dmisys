@@ -104,14 +104,11 @@ pub fn get_cpu_frequency() -> f64 {
 /// CPU Load Average (1 minutes)
 pub fn get_cpu_loading() -> f64 {
     let read_cpu_loading = System::load_average();
-    
 
     read_cpu_loading.one
 }
 
 /// CPU Architecture
 pub fn read_cpu_arch() -> String {
-    
-
     System::cpu_arch().unwrap_or_else(|| "Unknown".to_string())
 }

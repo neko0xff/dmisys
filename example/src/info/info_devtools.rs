@@ -52,7 +52,14 @@ pub fn output_msg() {
         "Yarn".blue().bold(),
         devtools::read_ver_yarn()
     );
-    /*println!(
+    /*println!("\n{}", "Java".blue().bold());
+    println!(
+        "{:<15}: {}",
+        "JDK".blue().bold(),
+        devtools::read_ver_jdk()
+    );
+    println!("\n{}", "Web Browser".blue().bold());
+    println!(
         "{:<15}: {}",
         "Firefox".blue().bold(),
         devtools::read_ver_firefox()

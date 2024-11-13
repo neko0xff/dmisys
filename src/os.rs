@@ -4,7 +4,6 @@ use sysinfo::System;
 /// Read OS release information
 pub fn read_release() -> String {
     let file = "/etc/os-release";
-    
 
     file::read_config_info(file)
 }
@@ -13,29 +12,22 @@ pub fn read_release() -> String {
 pub fn read_distro_name() -> String {
     let file = "/etc/os-release";
     let find = "NAME=";
-    
 
     file::read_config_var_string(file, find)
 }
 
 /// Read OS name
 pub fn read_osname() -> String {
-    
-
     System::long_os_version().unwrap_or_else(|| "Unknown".to_string())
 }
 
 /// Read Hostname
 pub fn read_hostname() -> String {
-    
-
     System::host_name().unwrap_or_else(|| "Unknown".to_string())
 }
 
 /// Read kernel version
 pub fn read_kernel() -> String {
-    
-
     System::kernel_version().unwrap_or_else(|| "Unknown".to_string())
 }
 

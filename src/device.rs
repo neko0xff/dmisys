@@ -14,8 +14,6 @@ fn run_cmd_devicepci() -> String {
 
 /// Read use `lspci` a  PCI Device List
 pub fn read_device_info() -> String {
-    
-
     run_cmd_devicepci()
 }
 
@@ -23,7 +21,6 @@ pub fn read_device_info() -> String {
 pub fn read_device_gpu() -> Vec<String> {
     let input = read_device_info();
     let regex_pattern = r"VGA compatible controller:\s*(.+)";
-    
 
     cv::regex_extract_vec(&input, regex_pattern)
 }

@@ -4,7 +4,6 @@ use crate::{cv, file};
 pub fn read_bat_info(bat_number: u8) -> String {
     let read_bat = format!("BAT{}", bat_number);
     let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
-    
 
     file::read_config_info(&file)
 }
@@ -14,7 +13,6 @@ pub fn read_bat_devtype(bat_number: u8) -> String {
     let read_bat = format!("BAT{}", bat_number);
     let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
     let find = "DEVTYPE=";
-    
 
     file::read_config_var_string(&file, find)
 }
@@ -24,7 +22,6 @@ pub fn read_bat_name(bat_number: u8) -> String {
     let read_bat = format!("BAT{}", bat_number);
     let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
     let find = "POWER_SUPPLY_NAME=";
-    
 
     file::read_config_var_string(&file, find)
 }
@@ -34,7 +31,6 @@ pub fn read_bat_type(bat_number: u8) -> String {
     let read_bat = format!("BAT{}", bat_number);
     let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
     let find = "POWER_SUPPLY_TYPE=";
-    
 
     file::read_config_var_string(&file, find)
 }
@@ -44,7 +40,6 @@ pub fn read_bat_status(bat_number: u8) -> String {
     let read_bat = format!("BAT{}", bat_number);
     let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
     let find = "POWER_SUPPLY_STATUS=";
-    
 
     file::read_config_var_string(&file, find)
 }
@@ -54,7 +49,6 @@ pub fn read_bat_present(bat_number: u8) -> bool {
     let read_bat = format!("BAT{}", bat_number);
     let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
     let find = "POWER_SUPPLY_PRESENT=";
-    
 
     file::read_config_var_bool(&file, find)
 }
@@ -64,7 +58,6 @@ pub fn read_bat_technology(bat_number: u8) -> String {
     let read_bat = format!("BAT{}", bat_number);
     let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
     let find = "POWER_SUPPLY_TECHNOLOGY=";
-    
 
     file::read_config_var_string(&file, find)
 }
@@ -74,7 +67,6 @@ pub fn read_bat_cyclecount(bat_number: u8) -> usize {
     let read_bat = format!("BAT{}", bat_number);
     let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
     let find = "POWER_SUPPLY_CYCLE_COUNT=";
-    
 
     file::read_config_var_usize(&file, find)
 }
@@ -85,7 +77,6 @@ pub fn read_bat_volt_min(bat_number: u8) -> f64 {
     let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
     let find = "POWER_SUPPLY_VOLTAGE_MIN_DESIGN=";
     let num = file::read_config_var_usize(&file, find);
-    
 
     cv::uv_to_volts(num)
 }
@@ -96,7 +87,6 @@ pub fn read_bat_volt_now(bat_number: u8) -> f64 {
     let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
     let find = "POWER_SUPPLY_VOLTAGE_NOW=";
     let num = file::read_config_var_usize(&file, find);
-    
 
     cv::uv_to_volts(num)
 }
@@ -107,7 +97,6 @@ pub fn read_bat_charge_now(bat_number: u8) -> f64 {
     let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
     let find = "POWER_SUPPLY_CHARGE_NOW=";
     let num = file::read_config_var_usize(&file, find);
-    
 
     cv::uah_to_mah(num)
 }
@@ -118,7 +107,6 @@ pub fn read_bat_charge_full_design(bat_number: u8) -> f64 {
     let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
     let find = "POWER_SUPPLY_CHARGE_FULL_DESIGN=";
     let num = file::read_config_var_usize(&file, find);
-    
 
     cv::uah_to_mah(num)
 }
@@ -128,7 +116,6 @@ pub fn read_bat_capacity(bat_number: u8) -> usize {
     let read_bat = format!("BAT{}", bat_number);
     let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
     let find = "POWER_SUPPLY_CAPACITY=";
-    
 
     file::read_config_var_usize(&file, find)
 }
@@ -138,7 +125,6 @@ pub fn read_bat_capacity_lv(bat_number: u8) -> String {
     let read_bat = format!("BAT{}", bat_number);
     let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
     let find = "POWER_SUPPLY_CAPACITY_LEVEL=";
-    
 
     file::read_config_var_string(&file, find)
 }
@@ -149,7 +135,6 @@ pub fn read_bat_current_now(bat_number: u8) -> f64 {
     let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
     let find = "POWER_SUPPLY_CURRENT_NOW=";
     let num = file::read_config_var_usize(&file, find);
-    
 
     cv::ma_to_a(num)
 }
@@ -159,7 +144,6 @@ pub fn read_bat_model(bat_number: u8) -> String {
     let read_bat = format!("BAT{}", bat_number);
     let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
     let find = "POWER_SUPPLY_MODEL_NAME=";
-    
 
     file::read_config_var_string(&file, find)
 }
@@ -169,7 +153,6 @@ pub fn read_bat_manufacturer(bat_number: u8) -> String {
     let read_bat = format!("BAT{}", bat_number);
     let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
     let find = "POWER_SUPPLY_MANUFACTURER=";
-    
 
     file::read_config_var_string(&file, find)
 }
@@ -179,7 +162,6 @@ pub fn read_bat_serialnum(bat_number: u8) -> String {
     let read_bat = format!("BAT{}", bat_number);
     let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
     let find = "POWER_SUPPLY_SERIAL_NUMBER=";
-    
 
     file::read_config_var_string(&file, find)
 }

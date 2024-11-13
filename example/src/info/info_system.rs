@@ -6,7 +6,7 @@ pub fn output_msg() {
     //let (days_unix, hours_unix, minutes_unix) = systime::read_systime_boot();
     let (io_write, io_read) = os::read_io_speed();
 
-    println!("{}", "System Information".green().bold());
+    println!("\n{}", "System Information".green().bold());
     println!("{}", "=================".green());
     println!("{:<15} {}", "OS:".blue().bold(), os::read_osname());
     println!("{:<15} {}", "Distro:".blue().bold(), os::read_distro_name());

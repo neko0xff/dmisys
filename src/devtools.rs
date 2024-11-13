@@ -100,6 +100,15 @@ fn read_cmd_rustup() -> String {
     String::from_utf8_lossy(&output.stdout).to_string()
 }
 
+fn read_cmd_jdk() -> String {
+    let output = Command::new("java")
+        .arg("-version")
+        .output()
+        .expect("Failed find");
+
+    String::from_utf8_lossy(&output.stdout).to_string()
+}
+
 /// node Version
 pub fn read_ver_node() -> String {
     let output = read_cmd_node();
@@ -143,7 +152,15 @@ pub fn read_ver_golang() -> String {
 /// Firefox Version
 pub fn read_ver_firefox() -> String {
     let output = read_cmd_firefox();
-    let regex_pattern = r"Firefox (\d+\.\d+\.\d+)";
+    let regex_pattern = r"(?:\d+\.\d+\.\d+(?:[a-zA-Z]\d*|esr|b\d+|rc\d+|alpha\d*|beta\d*)?)";
+
+    cv::regex_extract(&output, regex_pattern)
+}
+
+/// JDK Version
+pub fn read_ver_jdk() -> String {
+    let output = read_cmd_jdk();
+    let regex_pattern = r"(?:\d+(?:\.\d+){0,2}(?:_\d+)?(?:-ea|-ga|-internal)?(?:\+\d+)?(?:-LTS)?)";
 
     cv::regex_extract(&output, regex_pattern)
 }
@@ -187,3 +204,5 @@ pub fn read_ver_rustup() -> String {
 
     cv::regex_extract(&output, regex_pattern)
 }
+
+

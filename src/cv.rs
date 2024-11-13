@@ -4,7 +4,6 @@ use std::error::Error;
 /// bytes conversion: Giga Bytes(GB)
 pub fn bytes_to_gb(bytes: u64) -> f64 {
     let cv_gb = f64::powf(2_f64, 30_f64);
-    
 
     (bytes as f64) / cv_gb
 }
@@ -12,85 +11,67 @@ pub fn bytes_to_gb(bytes: u64) -> f64 {
 /// bytes conversion: Mega Bytes(MB)
 pub fn bytes_to_mb(data: u64) -> u64 {
     let cv_mb = u64::pow(2, 20);
-    
 
     data / cv_mb
 }
 
 /// SECTORS to Giga Bytes(GB)
 pub fn sectors_to_gb(data: u64) -> f64 {
-    
-
     (data * 512) as f64 / 1_073_741_824.0
 }
 
 /// time conversionsecord: sec to day
 pub fn sec_to_day(data: u64) -> u64 {
-    
-
     data / 86400
 }
 
 /// time conversionsecord: sec to hours
 pub fn sec_to_hours(data: u64) -> u64 {
-    
-
     (data % 86400) / 3600
 }
 
 /// time conversionsecord: sec to mins
 pub fn sec_to_mins(data: u64) -> u64 {
-    
-
     (data % 3600) / 60
 }
 
 /// percentage calculation
 pub fn percentage_cal(used: f64, total: f64) -> f64 {
-    
-
     (used / total) * 100.0
 }
 
 /// Unit Conversion: Converts millivolts (mV) to volts (V).
 pub fn mv_to_volts(mv: usize) -> f64 {
-    
     (mv as f64) / 1_000.0
 }
 
 /// Unit conversion: Convert milliampere hours (mAh) to microampere hours (μAh).
 pub fn mah_to_uah(mah: usize) -> f64 {
-    
     (mah as f64) * 1_000.0
 }
 
 /// Unit Conversion: Converts milliamps (mA) to amperes (A).
 pub fn ma_to_a(ma: usize) -> f64 {
-    
     (ma as f64) / 1_000.0
 }
 
 /// Unit Conversion: Converts micro ampere hours (μAh) to milli ampere hours (mAh).
 pub fn uah_to_mah(uah: usize) -> f64 {
-    
     (uah as f64) / 1_000.0
 }
 
 /// Unit conversion: Converts microamps (μA) to milliamps (mA).
 pub fn ua_to_ma(ua: usize) -> f64 {
-    
     (ua as f64) / 1_000.0
 }
 
 /// Unit Conversion: Converts microvolts (µV) to volts (V).
 pub fn uv_to_volts(uv: usize) -> f64 {
-    
     (uv as f64) / 1_000_000.0
 }
 
 /// Unit conversion: Converts milliamps (mA) to microamps (μA).
 pub fn ma_to_ua(ma: usize) -> f64 {
-    
     (ma as f64) * 1_000.0
 }
 

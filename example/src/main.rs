@@ -11,9 +11,10 @@ fn main() {
     let cli = ds_cli::Cli::parse();
     let arg_output = cli.output.as_deref();
 
-    // 輸出ASCII Text Art
-    output_ascii::text_art();
-    output_time::time_cli();
+    /*前置*/
+    output_ascii::text_art(); // ASCII Text Art 
+    output_time::time_cli(); // 當前輸出時間
+    output_version::output_msg(); // 當前版本號
 
     // 指定參數的輸出內容
     if arg_output == Some("system") {

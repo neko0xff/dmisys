@@ -29,8 +29,6 @@ pub fn read_cmd_shellver() -> String {
 
 /// Use a Shell Version
 pub fn read_env_shellver() -> String {
-    
-
     read_cmd_shellver()
 }
 
@@ -51,7 +49,6 @@ pub fn read_env_var(key: String) -> String {
 /// User Home Directory
 pub fn read_env_homedirectory() -> String {
     let find = "HOME";
-    
 
     read_env_var(find.to_string())
 }
@@ -59,7 +56,6 @@ pub fn read_env_homedirectory() -> String {
 /// Login User name
 pub fn read_env_loginuser() -> String {
     let find = "LOGNAME";
-    
 
     read_env_var(find.to_string())
 }
@@ -67,7 +63,6 @@ pub fn read_env_loginuser() -> String {
 /// User name
 pub fn read_env_user() -> String {
     let find = "USER";
-    
 
     read_env_var(find.to_string())
 }
@@ -75,7 +70,6 @@ pub fn read_env_user() -> String {
 /// Use a Shell
 pub fn read_env_shell() -> String {
     let find = "SHELL";
-    
 
     read_env_var(find.to_string())
 }
@@ -83,7 +77,6 @@ pub fn read_env_shell() -> String {
 /// Language
 pub fn read_env_lang() -> String {
     let find = "LANG";
-    
 
     read_env_var(find.to_string())
 }
@@ -91,7 +84,6 @@ pub fn read_env_lang() -> String {
 /// Login Session
 pub fn read_env_desktopsession() -> String {
     let find = "DESKTOP_SESSION";
-    
 
     read_env_var(find.to_string())
 }
@@ -99,7 +91,6 @@ pub fn read_env_desktopsession() -> String {
 /// Display Server
 pub fn read_env_displayserver() -> String {
     let find = "XDG_SESSION_TYPE";
-    
 
     read_env_var(find.to_string())
 }
@@ -107,7 +98,6 @@ pub fn read_env_displayserver() -> String {
 /// Desktop Environment
 pub fn read_env_displayde_session() -> String {
     let find = "XDG_SESSION_DESKTOP";
-    
 
     read_env_var(find.to_string())
 }
@@ -115,7 +105,6 @@ pub fn read_env_displayde_session() -> String {
 /// Desktop Environment
 pub fn read_env_displayde_current() -> String {
     let find = "XDG_CURRENT_DESKTOP";
-    
 
     read_env_var(find.to_string())
 }
@@ -123,7 +112,6 @@ pub fn read_env_displayde_current() -> String {
 /// Input Method
 pub fn read_env_inputmethod() -> String {
     let find = "XMODIFIERS=@im";
-    
 
     read_env_var(find.to_string())
 }
@@ -131,7 +119,6 @@ pub fn read_env_inputmethod() -> String {
 ///  Working directory: now
 pub fn read_env_nowpwd() -> String {
     let find = "PWD";
-    
 
     read_env_var(find.to_string())
 }
@@ -139,7 +126,6 @@ pub fn read_env_nowpwd() -> String {
 ///  Working directory: old
 pub fn read_env_oldpwd() -> String {
     let find = "OLDPWD";
-    
 
     read_env_var(find.to_string())
 }
@@ -147,7 +133,11 @@ pub fn read_env_oldpwd() -> String {
 /// Chrome Path
 pub fn read_env_chromepath() -> String {
     let find = "CHROME_EXECUTABLE";
-    
 
     read_env_var(find.to_string())
+}
+
+/// dmisys libary Version
+pub fn read_env_dmisys() -> &'static str {
+    env!("CARGO_PKG_VERSION")
 }

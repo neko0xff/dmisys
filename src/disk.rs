@@ -36,8 +36,6 @@ fn run_cmd_smartinfo(device: &str) -> String {
 
 /// read this pyhysical disk information
 pub fn read_disk_smartinfo(device: &str) -> String {
-    
-
     run_cmd_smartdata(device)
 }
 
