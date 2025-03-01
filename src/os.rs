@@ -1,4 +1,6 @@
 use crate::{cv, file};
+use std::{fs, path::Path, process::Command};
+use chrono::{NaiveDateTime, Local,TimeZone};
 use sysinfo::System;
 
 /// Read OS release information
@@ -44,4 +46,35 @@ pub fn read_io_speed() -> (u64, u64) {
     }
 
     (total_write, total_read)
+}
+
+/// System start time
+pub fn system_starttime() -> String {
+    if let Ok(contents) = fs::read_to_string("/proc/stat") {
+        for line in contents.lines() {
+            if let Some(time) = line.strip_prefix("btime ") {
+                return time.trim().to_string();
+            }
+        }
+    }
+    "Unknown".to_string()
+}
+
+/// System start time(UTC)
+pub fn system_starttime_utc() -> String {
+    if let Ok(contents) = fs::read_to_string("/proc/stat") {
+        for line in contents.lines() {
+            if let Some(timestamp) = line.strip_prefix("btime ") {
+                if let Ok(unix_time) = timestamp.trim().parse::<i64>() {
+                    let datetime = NaiveDateTime::from_timestamp_opt(unix_time, 0)
+                        .map(|dt| Local.from_utc_datetime(&dt));
+
+                    if let Some(dt) = datetime {
+                        return dt.format("%Y-%m-%d  %H:%M:%S").to_string();
+                    }
+                }
+            }
+        }
+    }
+    "Unknown".to_string()
 }

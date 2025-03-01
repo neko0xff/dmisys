@@ -110,5 +110,7 @@ pub fn get_cpu_loading() -> f64 {
 
 /// CPU Architecture
 pub fn read_cpu_arch() -> String {
-    System::cpu_arch().unwrap_or_else(|| "Unknown".to_string())
+    let cpu_arch = System::cpu_arch();
+    
+    cpu_arch
 }
