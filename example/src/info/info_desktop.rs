@@ -36,4 +36,11 @@ pub fn output_msg() {
         env::read_env_inputmethod()
     );
     println!("{:<15} {}", "Language:".blue().bold(), env::read_env_lang());
+    println!("\n{}", "Display Server".green().bold());
+    println!("{}", "=================".green());
+    println!(
+        "{:<15} {:?}",
+        "X Server:".blue().bold(),
+        display::read_xserver_ver()
+    );
 }

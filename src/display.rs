@@ -45,6 +45,21 @@ fn get_info_resolution() -> Option<String> {
     None
 }
 
+fn read_cmd_xserver() -> Result<String, std::io::Error> {
+    let output = Command::new("X")
+        .arg("-version")
+        .output()?;
+
+    let result = format!(
+        "{}{}",
+        String::from_utf8_lossy(&output.stdout),
+        String::from_utf8_lossy(&output.stderr)
+    );
+
+    Ok(result)
+}
+
+
 /// Display Resolution
 pub fn read_display_resolution() -> String {
     let output;
@@ -56,3 +71,12 @@ pub fn read_display_resolution() -> String {
 
     output.to_string()
 }
+
+///  Xorg Server: Verion
+pub fn read_xserver_ver() -> Option<String> {
+    let output = read_cmd_xserver().ok()?; 
+    let regex_pattern = r"X.Org X Server (\d+\.\d+\.\d+\.\d+)";
+    
+    Some(cv::regex_extract(&output, regex_pattern).into())
+}
+

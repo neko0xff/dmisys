@@ -64,4 +64,20 @@ pub fn output_msg() {
         "Firefox".blue().bold(),
         devtools::read_ver_firefox()
     );*/
+    println!("\n{}", "Desktop".blue().bold());
+    println!(
+        "{:<15}: {}",
+        "QT".blue().bold(),
+        devtools::read_ver_qt()
+    );
+    println!(
+        "{:<15}: {}",
+        "GTK".blue().bold(),
+        devtools::read_ver_gtk()
+    );
+    println!(
+        "{:<15}: {}",
+        "GTK 4".blue().bold(),
+        devtools::read_ver_gtk4()
+    );
 }

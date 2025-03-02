@@ -1,6 +1,6 @@
 use crate::{cv, file};
-use std::{fs, path::Path, process::Command};
-use chrono::{NaiveDateTime, Local,TimeZone};
+use chrono::{Local, NaiveDateTime, TimeZone};
+use std::fs;
 use sysinfo::System;
 
 /// Read OS release information

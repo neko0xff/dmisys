@@ -27,6 +27,7 @@ pub fn read_cmd_shellver() -> String {
         .to_string()
 }
 
+
 /// Use a Shell Version
 pub fn read_env_shellver() -> String {
     read_cmd_shellver()
@@ -136,6 +137,7 @@ pub fn read_env_chromepath() -> String {
 
     read_env_var(find.to_string())
 }
+
 
 /// dmisys libary Version
 pub fn read_env_dmisys() -> &'static str {

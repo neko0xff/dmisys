@@ -111,6 +111,6 @@ pub fn get_cpu_loading() -> f64 {
 /// CPU Architecture
 pub fn read_cpu_arch() -> String {
     let cpu_arch = System::cpu_arch();
-    
+
     cpu_arch
 }

@@ -109,6 +109,42 @@ fn read_cmd_jdk() -> String {
     String::from_utf8_lossy(&output.stdout).to_string()
 }
 
+fn read_cmd_qt() -> String {
+    let output = Command::new("qmake")
+        .arg("-query")
+        .arg("QT_VERSION")
+        .output()
+        .expect("Failed find");
+
+    String::from_utf8_lossy(&output.stdout).to_string()
+}
+
+fn read_cmd_gtk() -> String {
+    let output = Command::new("gtk-launch")
+        .arg("--version")
+        .output()
+        .expect("Failed find");
+
+    String::from_utf8_lossy(&output.stdout).to_string()
+}
+
+fn read_cmd_gtk4() -> String {
+    let output = Command::new("gtk4-launch")
+        .arg("--version")
+        .output()
+        .expect("Failed find");
+
+    String::from_utf8_lossy(&output.stdout).to_string()
+}
+
+/// QT Version
+pub fn read_ver_qt() -> String {
+    let output = read_cmd_qt();
+    let regex_pattern = r"(\d+\.\d+\.\d+)";
+
+    cv::regex_extract(&output, regex_pattern)
+}
+
 /// node Version
 pub fn read_ver_node() -> String {
     let output = read_cmd_node();
@@ -205,4 +241,18 @@ pub fn read_ver_rustup() -> String {
     cv::regex_extract(&output, regex_pattern)
 }
 
+/// GTK Version
+pub fn read_ver_gtk() -> String {
+    let output = read_cmd_gtk();
+    let regex_pattern = r"(\d+\.\d+\.\d+)";
 
+    cv::regex_extract(&output, regex_pattern)
+}
+
+/// GTK 4 Version
+pub fn read_ver_gtk4() -> String {
+    let output = read_cmd_gtk4();
+    let regex_pattern = r"(\d+\.\d+\.\d+)";
+
+    cv::regex_extract(&output, regex_pattern)
+}

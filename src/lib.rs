@@ -65,3 +65,4 @@ pub mod power;
 pub mod supply;
 pub mod systime;
 pub mod web;
+pub mod opengl;
