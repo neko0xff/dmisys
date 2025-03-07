@@ -1,5 +1,5 @@
 use crate::{cv, file};
-use chrono::{Local, NaiveDateTime, TimeZone};
+use chrono::DateTime;
 use std::fs;
 use sysinfo::System;
 
@@ -66,8 +66,7 @@ pub fn system_starttime_utc() -> String {
         for line in contents.lines() {
             if let Some(timestamp) = line.strip_prefix("btime ") {
                 if let Ok(unix_time) = timestamp.trim().parse::<i64>() {
-                    let datetime = NaiveDateTime::from_timestamp_opt(unix_time, 0)
-                        .map(|dt| Local.from_utc_datetime(&dt));
+                    let datetime = DateTime::from_timestamp(unix_time, 0);
 
                     if let Some(dt) = datetime {
                         return dt.format("%Y-%m-%d  %H:%M:%S").to_string();

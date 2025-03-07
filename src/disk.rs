@@ -1,5 +1,9 @@
 use crate::cv;
-use std::{fs, path::Path, process::Command};
+use std::{
+    fs,
+    path::Path,
+    process::Command
+};
 use sysinfo::Disks;
 
 /// read disk info

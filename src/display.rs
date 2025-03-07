@@ -1,5 +1,9 @@
 use crate::cv;
-use std::process::Command;
+use std::{
+    process::Command,
+    io
+};
+
 
 /// Read the output of xrandr command and parse the resolution
 fn read_cmd_xrandr() -> Result<String, std::io::Error> {
@@ -13,6 +17,18 @@ fn read_cmd_xdpyinfo() -> Result<String, std::io::Error> {
     let output = Command::new("xdpyinfo").output()?;
 
     Ok(String::from_utf8_lossy(&output.stdout).to_string())
+}
+
+fn read_cmd_xserver() -> Result<String, io::Error> {
+    let output = Command::new("X").arg("-version").output()?;
+
+    let result = format!(
+        "{}{}",
+        String::from_utf8_lossy(&output.stdout).to_string(),
+        String::from_utf8_lossy(&output.stderr).to_string()
+    );
+
+    Ok(result)
 }
 
 fn parse_output_xrandr(input: &str) -> Option<String> {
@@ -45,20 +61,6 @@ fn get_info_resolution() -> Option<String> {
     None
 }
 
-fn read_cmd_xserver() -> Result<String, std::io::Error> {
-    let output = Command::new("X")
-        .arg("-version")
-        .output()?;
-
-    let result = format!(
-        "{}{}",
-        String::from_utf8_lossy(&output.stdout),
-        String::from_utf8_lossy(&output.stderr)
-    );
-
-    Ok(result)
-}
-
 
 /// Display Resolution
 pub fn read_display_resolution() -> String {
@@ -69,14 +71,14 @@ pub fn read_display_resolution() -> String {
         None => output = "Unknow".to_string(),
     }
 
-    output.to_string()
+    output
 }
 
 ///  Xorg Server: Verion
-pub fn read_xserver_ver() -> Option<String> {
-    let output = read_cmd_xserver().ok()?; 
-    let regex_pattern = r"X.Org X Server (\d+\.\d+\.\d+\.\d+)";
-    
-    Some(cv::regex_extract(&output, regex_pattern).into())
+pub fn read_xserver_ver() -> String{
+    let output = read_cmd_xserver().unwrap();
+    let regex_pattern = r"(?m)X\.Org X Server (\d+\.\d+\.\d+)\.\d+";
+      
+    cv::regex_extract(&output, regex_pattern)
 }
 
