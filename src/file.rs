@@ -1,5 +1,8 @@
-use std::path::Path;
-use std::{fs, io};
+use std::{
+    fs, 
+    io,
+    path::Path
+};
 
 /// check this directory is file
 pub fn check_used_exists(path: &str) -> bool {

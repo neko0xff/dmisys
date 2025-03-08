@@ -1,5 +1,9 @@
 use crate::cv;
-use std::{fs, path::Path, process::Command};
+use std::{
+    fs, 
+    path::Path, 
+    process::Command
+};
 
 /// use command get PCI device list
 fn run_cmd_devicepci() -> String {

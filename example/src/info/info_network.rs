@@ -7,6 +7,7 @@ pub fn output_msg() {
     let local_ipv64 = network::get_local_ipv64();
     let network_speed = network::get_speed();
     let mac_address = network::get_macaddress();
+    let nameserver = network::get_nameservers();
 
     println!("\n{}", "Network".green().bold());
     println!("{}", "====================".green());
@@ -65,4 +66,11 @@ pub fn output_msg() {
             .collect();
         println!("{}", Table::new(mac_info));
     }
+    println!("\n{}", "DNS Server".green().bold());
+    println!("{}", "================".green());
+    println!(
+        "{:<15} {:?}",
+        "Name Server:".blue().bold(),
+        nameserver
+    );
 }

@@ -1,6 +1,17 @@
-use crate::{cv, web};
+use crate::{
+    cv, 
+    web
+};
+use std::{
+    error::Error,
+    net::IpAddr,
+    fs::File,
+    io::{
+        BufRead, 
+        BufReader
+    }
+};
 use get_if_addrs::get_if_addrs;
-use std::{error::Error, net::IpAddr};
 use sysinfo::Networks;
 
 fn get_public_ipv4() -> Result<Option<String>, Box<dyn Error>> {
@@ -105,4 +116,24 @@ pub fn get_macaddress() -> Vec<(String, String)> {
     }
 
     mac_info
+}
+
+/// Get DNS nameservers
+pub fn get_nameservers() -> Vec<String> {
+    match File::open("/etc/resolv.conf") {
+        Ok(file) => {
+            let reader = BufReader::new(file);
+            reader
+                .lines()
+                .filter_map(Result::ok)
+                .filter(|line| line.starts_with("nameserver"))
+                .filter_map(|line| {
+                    line.split_whitespace()
+                        .nth(1)
+                        .map(String::from)
+                })
+                .collect()
+        }
+        Err(_) => Vec::new(),
+    }
 }

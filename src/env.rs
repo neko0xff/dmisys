@@ -1,4 +1,7 @@
-use std::{env, process::Command};
+use std::{
+    env, 
+    process::Command
+};
 
 /// Read Command: Use a Shell Version
 pub fn read_cmd_shellver() -> String {

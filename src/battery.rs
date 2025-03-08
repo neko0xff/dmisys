@@ -1,4 +1,7 @@
-use crate::{cv, file};
+use crate::{
+    cv,
+    file
+};
 
 /// Read battery information from /sys/class/power_supply/BAT\[number]\/uevent
 pub fn read_bat_info(bat_number: u8) -> String {
