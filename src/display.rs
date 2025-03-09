@@ -82,3 +82,6 @@ pub fn read_xserver_ver() -> String{
     cv::regex_extract(&output, regex_pattern)
 }
 
+pub fn read_display_id() -> &'static str {
+    env!("DISPLAY")
+}

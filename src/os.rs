@@ -2,8 +2,11 @@ use crate::{
     cv, 
     file
 };
+use std::{
+    fs,
+    process::Command,
+};
 use chrono::DateTime;
-use std::fs;
 use sysinfo::System;
 
 /// Read OS release information
@@ -79,4 +82,20 @@ pub fn system_starttime_utc() -> String {
         }
     }
     "Unknown".to_string()
+}
+
+/// System init System
+pub fn read_os_init() -> String {
+    let output = Command::new("ps")
+        .args(&["-p", "1", "-o", "comm="])
+        .output();
+    
+    match output {
+        Ok(output) => String::from_utf8_lossy(&output.stdout).trim().to_string(),
+        Err(_) => "Unknown".to_string(),
+    }
+}
+
+pub fn read_terminal() -> &'static str {
+    env!("TERM")
 }

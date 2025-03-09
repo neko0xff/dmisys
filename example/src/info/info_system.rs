@@ -11,6 +11,8 @@ pub fn output_msg() {
     println!("{:<15} {}", "OS:".blue().bold(), os::read_osname());
     println!("{:<15} {}", "Distro:".blue().bold(), os::read_distro_name());
     println!("{:<15} {}", "Host Name:".blue().bold(), os::read_hostname());
+    println!("{:<15} {}", "Init:".blue().bold(), os::read_os_init());
+    println!("{:<15} {:?}", "Terminal:".blue().bold(), os::read_terminal());
     println!("{:<15} {}", "Kernel:".blue().bold(), os::read_kernel());
     println!(
         "{:<15} {}",
@@ -56,4 +58,5 @@ pub fn output_msg() {
         bios::read_bios_version()
     );
     println!("{:<15} {}", "Date:".blue().bold(), bios::read_bios_date());
+
 }

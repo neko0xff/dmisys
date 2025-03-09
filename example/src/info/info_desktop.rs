@@ -25,6 +25,11 @@ pub fn output_msg() {
     println!("\n{}", "Display Screen".blue().bold());
     println!(
         "{:<15} {}",
+        "ID:".blue().bold(),
+        display::read_display_id()
+    );
+    println!(
+        "{:<15} {}",
         "Resolution:".blue().bold(),
         display::read_display_resolution()
     );
