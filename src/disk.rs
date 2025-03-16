@@ -2,9 +2,16 @@ use crate::cv;
 use std::{
     fs,
     path::Path,
-    process::Command
+    process::Command,
+    ffi::CString,
+    mem::MaybeUninit,
+    io::{
+        BufRead,
+        BufReader
+    },
+    fs::File,
 };
-use sysinfo::Disks;
+use libc::statvfs;
 
 /// read disk info
 fn run_cmd_smartdata(device: &str) -> String {
@@ -93,84 +100,101 @@ pub fn read_disk_sataver(device: &str) -> String {
 }
 
 /// read this pyhysical disk total space
-pub fn read_disk_totalspace() -> (String, f64) {
-    let disks = Disks::new_with_refreshed_list();
-    let mut name = String::new();
-    let mut total_space = 0.0;
+fn get_disk_size(mount_point: &str) -> Option<f64> {
+    let path = CString::new(mount_point).unwrap();
+    let mut stat: MaybeUninit<statvfs> = MaybeUninit::uninit();
 
-    disks.list().iter().for_each(|disk| {
-        name = disk.name().to_string_lossy().to_string();
-        total_space = cv::bytes_to_gb(disk.total_space());
-    });
+    unsafe {
+        if statvfs(path.as_ptr(), stat.as_mut_ptr()) == 0 {
+            let stat = stat.assume_init();
+            let total_size = stat.f_blocks as u64 * stat.f_frsize as u64;
 
-    if name.is_empty() {
-        name = "Not Found".to_string();
-        total_space = 0.0;
-    }
-
-    (name, total_space)
-}
-
-/// Read disk sector space and return as vector
-pub fn read_disk_sectorspace_vec(
-) -> Vec<(String, Option<String>, Option<String>, f64, f64, f64, f64)> {
-    let mut disk_info = Vec::new();
-    let disks = Disks::new_with_refreshed_list();
-
-    for disk in disks.list() {
-        let name = disk.name().to_string_lossy().to_string(); // disk name
-        let filesystem = disk.file_system().to_str().map(String::from); // file system
-        let mount_point = disk.mount_point().to_str().map(String::from); // mount point
-        let total_space = cv::bytes_to_gb(disk.total_space()); // total space
-        let used_space = cv::bytes_to_gb(disk.total_space() - disk.available_space()); // used space
-        let free_space = cv::bytes_to_gb(disk.available_space()); // free space
-        let used_point = cv::percentage_cal(used_space, total_space); // used
-
-        if !name.starts_with("overlay") {
-            disk_info.push((
-                name,
-                filesystem,
-                mount_point,
-                total_space,
-                used_space,
-                used_point,
-                free_space,
-            ));
+            return Some(cv::bytes_to_gb(total_size)); 
         }
     }
 
-    disk_info
+
+    None
 }
 
-/// Read disk sector space and return as map
-pub fn read_disk_all_vec() -> Vec<(String, f64)> {
-    let mut disks_info = Vec::new();
-    let block_devices_path = Path::new("/sys/block/");
+/// read this pyhysical disk total space
+pub fn read_disk_totalspace() -> (String, f64) {
+    let path = "/proc/mounts";
+    let file = File::open(path).expect("Failed to open /proc/mounts");
+    let reader = BufReader::new(file);
 
-    if let Ok(entries) = fs::read_dir(block_devices_path) {
-        for entry in entries {
-            if let Ok(entry) = entry {
-                let device_name = entry.file_name().into_string().unwrap();
+    for line in reader.lines() {
+        if let Ok(line) = line {
+            let parts: Vec<&str> = line.split_whitespace().collect();
+            if parts.len() > 2 {
+                let device_name = parts[0].to_string(); // Disk Name
+                let mount_point = parts[1]; // Disk Mount Point
 
-                if !device_name.starts_with("loop") && !device_name.starts_with("ram") {
-                    let size_path = block_devices_path.join(&device_name).join("size");
-                    if let Ok(size_str) = fs::read_to_string(size_path) {
-                        if let Ok(sectors) = size_str.trim().parse::<u64>() {
-                            let device_name_str = device_name.to_string();
-                            let total_size_gb = cv::sectors_to_gb(sectors);
-                            disks_info.push((device_name_str, total_size_gb));
-                        }
-                    }
+                if let Some(total_space) = get_disk_size(mount_point) {
+                    return (device_name, total_space);
                 }
             }
         }
     }
 
-    if disks_info.is_empty() {
-        disks_info.push(("Not Found".to_string(), 0.0));
+    ("Not Found".to_string(), 0.0)
+}
+
+
+
+/// Read disk sector space and return as map
+pub fn get_disk_info(mount_point: &str) -> Option<(f64, f64, f64, f64)> {
+    let path = CString::new(mount_point).unwrap();
+    let mut stat: MaybeUninit<statvfs> = MaybeUninit::uninit();
+
+    unsafe {
+        if statvfs(path.as_ptr(), stat.as_mut_ptr()) == 0 {
+            let stat = stat.assume_init();
+            let total_space = stat.f_blocks as u64 * stat.f_frsize as u64;
+            let free_space = stat.f_bavail as u64 * stat.f_frsize as u64;
+            let used_space = total_space - free_space;
+
+            let total_gb = cv::bytes_to_gb(total_space);
+            let used_gb = cv::bytes_to_gb(used_space);
+            let free_gb = cv::bytes_to_gb(free_space);
+            let used_percent = (used_gb / total_gb) * 100.0;
+
+            return Some((total_gb, used_gb, used_percent, free_gb));
+        }
+    }
+    None
+}
+
+/// Read disk sector space and return as vector
+pub fn read_disk_sectorspace_vec() -> Vec<(String, Option<String>, Option<String>, f64, f64, f64, f64)> {
+    let file = File::open("/proc/mounts").expect("Failed to open /proc/mounts");
+    let reader = BufReader::new(file);
+    let mut disk_info = Vec::new();
+
+    for line in reader.lines() {
+        if let Ok(line) = line {
+            let parts: Vec<&str> = line.split_whitespace().collect();
+            if parts.len() > 2 {
+                let name = parts[0].to_string(); // Disk name
+                let mount_point = parts[1].to_string(); // Disk mount point
+                let filesystem = parts[2].to_string(); // Disk File System
+
+                if let Some((total_space, used_space, used_percent, free_space)) = get_disk_info(&mount_point) {
+                    disk_info.push((
+                        name,
+                        Some(filesystem),
+                        Some(mount_point),
+                        total_space,
+                        used_space,
+                        used_percent,
+                        free_space,
+                    ));
+                }
+            }
+        }
     }
 
-    disks_info
+    disk_info
 }
 
 /// Read PyhysicalDrive info and return as vector
@@ -230,6 +254,38 @@ pub fn read_disks_physicaldrive_list() -> Vec<String> {
 
     if disks_info.is_empty() {
         disks_info.push("Not Found".to_string());
+    }
+
+    disks_info
+}
+
+/// Read disk sector space and return as map
+pub fn read_disk_all_vec() -> Vec<(String, f64)> {
+    let mut disks_info = Vec::new();
+    let block_devices_path = Path::new("/sys/block/");
+
+    if let Ok(entries) = fs::read_dir(block_devices_path) {
+        for entry in entries {
+            if let Ok(entry) = entry {
+                let device_name = entry.file_name().into_string().unwrap();
+
+                if !device_name.starts_with("loop") && !device_name.starts_with("ram") {
+                    let size_path = block_devices_path.join(&device_name).join("size");
+                    if let Ok(size_str) = fs::read_to_string(size_path) {
+                        if let Ok(sectors) = size_str.trim().parse::<u64>() {
+                            let device_name_str = device_name.to_string();
+                            let total_size_gb = cv::sectors_to_gb(sectors);
+                            
+                            disks_info.push((device_name_str, total_size_gb));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if disks_info.is_empty() {
+        disks_info.push(("Not Found".to_string(), 0.0));
     }
 
     disks_info

@@ -46,8 +46,8 @@ pub fn output_msg() {
             .iter()
             .map(|(interface, tx, rx)| NetworkSpeed {
                 interface: interface.to_string(),
-                tx_speed: format!("{} Mb", tx),
-                rx_speed: format!("{} Mb", rx),
+                tx_speed: format!("{:.2} Mb", tx),
+                rx_speed: format!("{:.2} Mb", rx),
             })
             .collect();
         println!("{}", Table::new(speed_info));

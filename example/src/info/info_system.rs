@@ -12,7 +12,7 @@ pub fn output_msg() {
     println!("{:<15} {}", "Distro:".blue().bold(), os::read_distro_name());
     println!("{:<15} {}", "Host Name:".blue().bold(), os::read_hostname());
     println!("{:<15} {}", "Init:".blue().bold(), os::read_os_init());
-    println!("{:<15} {:?}", "Terminal:".blue().bold(), os::read_terminal());
+    println!("{:<15} {}", "Terminal:".blue().bold(), os::read_terminal());
     println!("{:<15} {}", "Kernel:".blue().bold(), os::read_kernel());
     println!(
         "{:<15} {}",
@@ -34,7 +34,7 @@ pub fn output_msg() {
     );
     //println!("{:<15} {} days, {} hours, {} minutes", "Unix time:".blue().bold(), days_unix, hours_unix, minutes_unix);
     println!(
-        "{:<15} Write = {} MB / Read = {} MB",
+        "{:<15} Write = {:.2} MB / Read = {:.2} MB",
         "IO:".blue().bold(),
         io_write,
         io_read

@@ -3,21 +3,20 @@ use std::error::Error;
 
 /// bytes conversion: Giga Bytes(GB)
 pub fn bytes_to_gb(bytes: u64) -> f64 {
-    let cv_gb = f64::powf(2_f64, 30_f64);
-
-    (bytes as f64) / cv_gb
+    const GB_CONVERSION: f64 = 1_073_741_824.0; // 1 GB = 2^30 bytes
+    bytes as f64 / GB_CONVERSION
 }
 
 /// bytes conversion: Mega Bytes(MB)
-pub fn bytes_to_mb(data: u64) -> u64 {
-    let cv_mb = u64::pow(2, 20);
-
-    data / cv_mb
+pub fn bytes_to_mb(bytes: u64) -> f64 {
+    const MB_CONVERSION: f64 = 1_048_576.0;  // 1 MB = 2^20 bytes
+    bytes as f64 / MB_CONVERSION
 }
 
 /// SECTORS to Giga Bytes(GB)
-pub fn sectors_to_gb(data: u64) -> f64 {
-    (data * 512) as f64 / 1_073_741_824.0
+pub fn sectors_to_gb(sectors: u64) -> f64 {
+    const SECTOR_SIZE: u64 = 512; // 1 sector = 512 bytes
+    bytes_to_gb(sectors * SECTOR_SIZE)
 }
 
 /// time conversionsecord: sec to day

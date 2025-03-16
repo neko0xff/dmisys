@@ -4,15 +4,19 @@ use crate::{
 };
 use std::{
     error::Error,
-    net::IpAddr,
+    net::{IpAddr, Ipv4Addr, Ipv6Addr},
     fs::File,
+    fs,
+    path::Path,
     io::{
         BufRead, 
         BufReader
-    }
+    },
+    ffi::CStr,
+    ptr
 };
 use get_if_addrs::get_if_addrs;
-use sysinfo::Networks;
+use libc::{getifaddrs, freeifaddrs, ifaddrs, sockaddr, AF_INET, AF_INET6};
 
 fn get_public_ipv4() -> Result<Option<String>, Box<dyn Error>> {
     let url = "https://api.ipify.org";
@@ -73,50 +77,127 @@ pub fn get_local_ipv64() -> Vec<(String, String, String)> {
     ip_info
 }
 
-/// Get now network interfaces a Upload & Download speed
-pub fn get_speed() -> Vec<(String, f64, f64)> {
-    let if_addrs = get_if_addrs().unwrap();
-    let networks = Networks::new_with_refreshed_list();
-    let mut speed_info = Vec::new();
+pub fn get_network_interfaces() -> Vec<(String, IpAddr)> {
+    let mut interfaces = Vec::new();
 
-    for iface in if_addrs {
-        if !iface.addr.is_loopback() {
-            if let Some((iface_name, data)) = networks.iter().find(|(name, _)| *name == &iface.name)
-            {
-                let received_mb = cv::bytes_to_mb(data.total_received()) as f64;
-                let transmitted_mb = cv::bytes_to_mb(data.total_transmitted()) as f64;
-                speed_info.push((iface_name.to_string(), transmitted_mb, received_mb));
+    unsafe {
+        let mut ifap: *mut ifaddrs = ptr::null_mut();
+
+        if getifaddrs(&mut ifap) == 0 {
+            let mut ptr = ifap;
+
+            while !ptr.is_null() {
+                let iface = &*ptr;
+
+                if let Some(name) = iface.ifa_name.as_ref() {
+                    let iface_name = CStr::from_ptr(name).to_string_lossy().into_owned();
+
+                    if !iface.ifa_addr.is_null() {
+                        let sockaddr = &*(iface.ifa_addr as *const sockaddr);
+
+                        let ip_addr = match sockaddr.sa_family as i32 {
+                            AF_INET => {
+                                let sin = *(iface.ifa_addr as *const libc::sockaddr_in);
+                                IpAddr::V4(Ipv4Addr::from(u32::from_be(sin.sin_addr.s_addr)))
+                            }
+                            AF_INET6 => {
+                                let sin6 = *(iface.ifa_addr as *const libc::sockaddr_in6);
+                                IpAddr::V6(Ipv6Addr::from(sin6.sin6_addr.s6_addr))
+                            }
+                            _ => continue,
+                        };
+
+                        interfaces.push((iface_name, ip_addr));
+                    }
+                }
+
+                ptr = iface.ifa_next;
             }
+
+            freeifaddrs(ifap);
+        }
+    }
+
+    interfaces
+}
+
+
+/// Get now network interfaces a Upload & Download speed
+fn read_net_stat(interface: &str, stat: &str) -> Option<f64> {
+    let path = format!("/sys/class/net/{}/statistics/{}", interface, stat);
+    if Path::new(&path).exists() {
+        fs::read_to_string(path)
+            .ok()
+            .and_then(|s| s.trim().parse::<f64>().ok())
+    } else {
+        None
+    }
+}
+
+/// 取得網路速度資訊
+pub fn get_speed() -> Vec<(String, f64, f64)> {
+    let mut speed_info = Vec::new();
+    let interfaces = fs::read_dir("/sys/class/net") 
+        .ok()
+        .into_iter()
+        .flatten(); 
+
+    for iface in interfaces {
+        if let Ok(entry) = iface {
+            let iface_name = entry.file_name().into_string().unwrap();
+            let received_bytes = read_net_stat(&iface_name, "rx_bytes").unwrap_or(0.0);
+            let transmitted_bytes = read_net_stat(&iface_name, "tx_bytes").unwrap_or(0.0);
+
+            let received_mb = cv::bytes_to_mb(received_bytes as u64);
+            let transmitted_mb = cv::bytes_to_mb(transmitted_bytes as u64);
+
+            speed_info.push((iface_name, transmitted_mb, received_mb));
         }
     }
 
     if speed_info.is_empty() {
-        speed_info.push(("No Found".to_string(), 0.0, 0.0));
+        speed_info.push(("Not Found".to_string(), 0.0, 0.0));
     }
 
     speed_info
 }
 
+
 /// Get MAC address of network interfaces
+fn get_mac_address(interface: &str) -> Option<String> {
+    let path = format!("/sys/class/net/{}/address", interface);
+
+    if Path::new(&path).exists() {
+        fs::read_to_string(path).ok().map(|s| s.trim().to_string())
+    } else {
+        None
+    }
+}
+
+/// 取得所有網卡的 MAC 地址
 pub fn get_macaddress() -> Vec<(String, String)> {
     let mut mac_info = Vec::new();
-    let networks = Networks::new_with_refreshed_list();
+    let interfaces = fs::read_dir("/sys/class/net") 
+        .ok()
+        .into_iter()
+        .flatten(); 
 
-    for (interface_name, network) in networks.iter() {
-        let mac = network.mac_address();
-        let mac_address = format!(
-            "{:02X}:{:02X}:{:02X}:{:02X}:{:02X}:{:02X}",
-            mac.0[0], mac.0[1], mac.0[2], mac.0[3], mac.0[4], mac.0[5]
-        );
-        mac_info.push((interface_name.clone(), mac_address));
+    for iface in interfaces {
+        if let Ok(entry) = iface {
+            let iface_name = entry.file_name().into_string().unwrap();
+            if let Some(mac) = get_mac_address(&iface_name) {
+                mac_info.push((iface_name, mac));
+            }
+        }
     }
 
     if mac_info.is_empty() {
-        mac_info.push(("".to_string(), "".to_string()));
+        mac_info.push(("Not Found".to_string(), "".to_string()));
     }
 
     mac_info
 }
+
 
 /// Get DNS nameservers
 pub fn get_nameservers() -> Vec<String> {

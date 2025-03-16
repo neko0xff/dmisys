@@ -40,18 +40,18 @@ pub fn read_kernel() -> String {
 }
 
 /// Read IO speed (total write and read) in MB/s
-pub fn read_io_speed() -> (u64, u64) {
-    let mut total_write: u64 = 0;
-    let mut total_read: u64 = 0;
+pub fn read_io_speed() -> (f64, f64) {
+    let mut total_write: f64 = 0.0;
+    let mut total_read: f64 = 0.0;
     let sys = System::new_all();
 
     for process in sys.processes().values() {
-        let disk_usage = process.disk_usage();
+        let disk_usage = process.disk_usage() ;
         total_write += cv::bytes_to_mb(disk_usage.written_bytes);
         total_read += cv::bytes_to_mb(disk_usage.read_bytes);
     }
 
-    (total_write, total_read)
+    (total_write as f64, total_read as f64)
 }
 
 /// System start time

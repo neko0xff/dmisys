@@ -1,27 +1,38 @@
 use std::{
+    fs,
     fs::File,
-    io::{self, BufRead},
+    io::{
+        self,
+        BufRead
+    },
+    ffi::CStr
 };
-use sysinfo::System;
+use libc::{
+    uname, 
+    utsname,
+    getloadavg,
+    sysconf, 
+    _SC_NPROCESSORS_ONLN
+};
 
 /// CPU Model
 pub fn read_cpu_model() -> String {
     let info_path = "/proc/cpuinfo";
 
-    if let Ok(file) = File::open(info_path) {
-        let reader = io::BufReader::new(file);
-
-        for line in reader.lines() {
-            if let Ok(line) = line {
-                if line.starts_with("model name") {
-                    let get = line.split(": ").nth(1).unwrap_or("").trim();
-                    let output = get.to_owned();
-                    return output;
-                }
+    if let Ok(contents) = fs::read_to_string(info_path) {
+        for line in contents.lines() {
+            if line.starts_with("model name") {
+                let output = line
+                    .split(':')
+                    .nth(1)
+                    .unwrap_or("Unknown")
+                    .trim()
+                    .to_string();
+                return output;
             }
         }
     }
-
+    
     "Unknown".to_string()
 }
 
@@ -103,14 +114,36 @@ pub fn get_cpu_frequency() -> f64 {
 
 /// CPU Load Average (1 minutes)
 pub fn get_cpu_loading() -> f64 {
-    let read_cpu_loading = System::load_average();
+    let mut loads: [f64; 1] = [0.0]; 
+    let cpu_cores = unsafe { sysconf(_SC_NPROCESSORS_ONLN) } as f64; 
 
-    read_cpu_loading.one
+    unsafe {
+        if getloadavg(loads.as_mut_ptr(), 1) == 1 {
+            let load_avg = loads[0] / cpu_cores * 100.0; 
+            return load_avg;
+        }
+    }
+
+    0.0 
 }
 
 /// CPU Architecture
 pub fn read_cpu_arch() -> String {
-    let cpu_arch = System::cpu_arch();
+    unsafe {
+        let mut uts = utsname {
+            sysname: [0; 65],
+            nodename: [0; 65],
+            release: [0; 65],
+            version: [0; 65],
+            machine: [0; 65], 
+            domainname: [0; 65],
+        };
 
-    cpu_arch
+        if uname(&mut uts) == 0 {
+            let output = CStr::from_ptr(uts.machine.as_ptr()).to_string_lossy().into_owned();
+            return output;
+        }
+    }
+
+    "Unknown".to_string()
 }

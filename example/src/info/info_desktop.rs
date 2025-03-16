@@ -44,7 +44,7 @@ pub fn output_msg() {
     println!("\n{}", "Display Server".green().bold());
     println!("{}", "=================".green());
     println!(
-        "{:<15} {:?}",
+        "{:<15} {}",
         "X Server:".blue().bold(),
         display::read_xserver_ver()
     );

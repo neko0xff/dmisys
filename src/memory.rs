@@ -18,12 +18,12 @@ impl Info {
     }
 
     /// total installed memory space(MB)
-    pub fn total_memory(&self) -> u64 {
+    pub fn total_memory(&self) -> f64 {
         cv::bytes_to_mb(self.sys.total_memory())
     }
 
     /// used installed memory space (MB)
-    pub fn used_memory(&self) -> u64 {
+    pub fn used_memory(&self) -> f64 {
         cv::bytes_to_mb(self.sys.used_memory())
     }
 
@@ -40,7 +40,7 @@ impl Info {
     }
 
     /// free installed memory space (MB)
-    pub fn free_memory(&self) -> u64 {
+    pub fn free_memory(&self) -> f64 {
         cv::bytes_to_mb(self.sys.free_memory())
     }
 
@@ -57,7 +57,7 @@ impl Info {
     }
 
     /// available installed memory space (MB)
-    pub fn available_memory(&self) -> u64 {
+    pub fn available_memory(&self) -> f64 {
         cv::bytes_to_mb(self.sys.available_memory())
     }
 
@@ -74,12 +74,12 @@ impl Info {
     }
 
     /// total swap space (MB)
-    pub fn total_swap(&self) -> u64 {
+    pub fn total_swap(&self) -> f64 {
         cv::bytes_to_mb(self.sys.total_swap())
     }
 
     /// Free swap space
-    pub fn free_swap(&self) -> u64 {
+    pub fn free_swap(&self) -> f64 {
         cv::bytes_to_mb(self.sys.free_swap())
     }
 
@@ -96,7 +96,7 @@ impl Info {
     }
 
     /// Used a swap space
-    pub fn used_swap(&self) -> u64 {
+    pub fn used_swap(&self) -> f64 {
         cv::bytes_to_mb(self.sys.used_swap())
     }
 
