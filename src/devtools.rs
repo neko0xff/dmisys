@@ -111,8 +111,7 @@ fn read_cmd_jdk() -> String {
 
 fn read_cmd_qt() -> String {
     let output = Command::new("qmake")
-        .arg("-query")
-        .arg("QT_VERSION")
+        .args(&["-query", "QT_VERSION"])
         .output()
         .expect("Failed find");
 

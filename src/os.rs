@@ -1,13 +1,17 @@
-use crate::{
-    cv, 
-    file
-};
+use crate::file;
 use std::{
     fs,
     process::Command,
+    ffi::CStr,
+    thread::sleep,
+    time::Duration
+};
+use libc::{
+    uname, 
+    utsname
 };
 use chrono::DateTime;
-use sysinfo::System;
+
 
 /// Read OS release information
 pub fn read_release() -> String {
@@ -26,51 +30,124 @@ pub fn read_distro_name() -> String {
 
 /// Read OS name
 pub fn read_osname() -> String {
-    System::long_os_version().unwrap_or_else(|| "Unknown".to_string())
+    unsafe {
+        let mut uts = utsname {
+            sysname: [0; 65], 
+            nodename: [0; 65],
+            release: [0; 65],
+            version: [0; 65],
+            machine: [0; 65],
+            domainname: [0; 65],
+        };
+
+        if uname(&mut uts) == 0 {
+            let output = CStr::from_ptr(uts.sysname.as_ptr()).to_string_lossy().into_owned(); //os name
+            return output;
+        }
+    }
+
+    "Unknown".to_string()
 }
 
 /// Read Hostname
 pub fn read_hostname() -> String {
-    System::host_name().unwrap_or_else(|| "Unknown".to_string())
+    unsafe {
+        let mut uts = utsname {
+            sysname: [0; 65], 
+            nodename: [0; 65], 
+            release: [0; 65],
+            version: [0; 65],
+            machine: [0; 65],
+            domainname: [0; 65],
+        };
+
+        if uname(&mut uts) == 0 {
+            let output = CStr::from_ptr(uts.nodename.as_ptr()).to_string_lossy().into_owned(); // host name
+            return output;
+        }
+    }
+
+    "Unknown".to_string()
 }
 
 /// Read kernel version
 pub fn read_kernel() -> String {
-    System::kernel_version().unwrap_or_else(|| "Unknown".to_string())
-}
+    unsafe {
+        let mut uts = utsname {
+            sysname: [0; 65], 
+            nodename: [0; 65], 
+            release: [0; 65],
+            version: [0; 65],
+            machine: [0; 65],
+            domainname: [0; 65],
+        };
 
-/// Read IO speed (total write and read) in MB/s
-pub fn read_io_speed() -> (f64, f64) {
-    let mut total_write: f64 = 0.0;
-    let mut total_read: f64 = 0.0;
-    let sys = System::new_all();
-
-    for process in sys.processes().values() {
-        let disk_usage = process.disk_usage() ;
-        total_write += cv::bytes_to_mb(disk_usage.written_bytes);
-        total_read += cv::bytes_to_mb(disk_usage.read_bytes);
+        if uname(&mut uts) == 0 {
+            let output = CStr::from_ptr(uts.release.as_ptr()).to_string_lossy().into_owned(); // kernel version
+            return output;
+        }
     }
 
-    (total_write as f64, total_read as f64)
+    "Unknown".to_string()
+}
+
+/// Disk IO read & write
+fn read_dir_disk() -> (u64, u64) {
+    let data = fs::read_to_string("/proc/diskstats");
+    let mut total_read = 0u64;
+    let mut total_write = 0u64;
+    for line in data.expect("REASON").lines() {
+        let parts: Vec<&str> = line.split_whitespace().collect();
+        if parts.len() < 14 {
+            continue;
+        }
+        let device_name = parts[2];
+        if !device_name.contains("loop") {
+            total_read += parts[5].parse::<u64>().unwrap_or(0); 
+            total_write += parts[9].parse::<u64>().unwrap_or(0); 
+        }
+    }
+
+    (total_read, total_write)
+}
+
+/// Disk IO Speed
+/// test cmd: $ dd if=/dev/zero of=testfile bs=1M count=10000 && sync
+pub fn read_io_speed() -> (f64, f64) {
+    let sector_size = 512.0;
+    let (read_sectors_1, write_sectors_1) = read_dir_disk(); // 1 time
+    sleep(Duration::from_secs(1)); // sleep 1 sec
+    let (read_sectors_2, write_sectors_2) = read_dir_disk(); // 2 time
+    
+    let read_mb = ((read_sectors_2.saturating_sub(read_sectors_1)) as f64 * sector_size) / (1024.0 * 1024.0);
+    let write_mb = ((write_sectors_2.saturating_sub(write_sectors_1)) as f64 * sector_size) / (1024.0 * 1024.0);
+    
+  (read_mb, write_mb)
 }
 
 /// System start time
 pub fn system_starttime() -> String {
-    if let Ok(contents) = fs::read_to_string("/proc/stat") {
+    let path =  "/proc/stat";
+
+    if let Ok(contents) = fs::read_to_string(path) {
         for line in contents.lines() {
             if let Some(time) = line.strip_prefix("btime ") {
                 return time.trim().to_string();
             }
         }
     }
+
     "Unknown".to_string()
 }
 
 /// System start time(UTC)
 pub fn system_starttime_utc() -> String {
-    if let Ok(contents) = fs::read_to_string("/proc/stat") {
+    let path =  "/proc/stat";
+
+    if let Ok(contents) = fs::read_to_string(path) {
         for line in contents.lines() {
             if let Some(timestamp) = line.strip_prefix("btime ") {
+                // to UTC time
                 if let Ok(unix_time) = timestamp.trim().parse::<i64>() {
                     let datetime = DateTime::from_timestamp(unix_time, 0);
 
@@ -81,6 +158,7 @@ pub fn system_starttime_utc() -> String {
             }
         }
     }
+
     "Unknown".to_string()
 }
 

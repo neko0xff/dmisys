@@ -4,7 +4,6 @@ use std::{
     io
 };
 
-
 /// Read the output of xrandr command and parse the resolution
 fn read_cmd_xrandr() -> Result<String, std::io::Error> {
     let output = Command::new("xrandr").arg("--current").output()?;

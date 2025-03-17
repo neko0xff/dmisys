@@ -4,7 +4,11 @@ use crate::{
 };
 use std::{
     error::Error,
-    net::{IpAddr, Ipv4Addr, Ipv6Addr},
+    net::{
+        IpAddr, 
+        Ipv4Addr, 
+        Ipv6Addr
+    },
     fs::File,
     fs,
     path::Path,
@@ -15,8 +19,16 @@ use std::{
     ffi::CStr,
     ptr
 };
+use libc::{
+    getifaddrs,
+    freeifaddrs,
+    ifaddrs, 
+    sockaddr, 
+    AF_INET, 
+    AF_INET6
+};
 use get_if_addrs::get_if_addrs;
-use libc::{getifaddrs, freeifaddrs, ifaddrs, sockaddr, AF_INET, AF_INET6};
+
 
 fn get_public_ipv4() -> Result<Option<String>, Box<dyn Error>> {
     let url = "https://api.ipify.org";
@@ -77,6 +89,7 @@ pub fn get_local_ipv64() -> Vec<(String, String, String)> {
     ip_info
 }
 
+/// Get Network interfaces & Address
 pub fn get_network_interfaces() -> Vec<(String, IpAddr)> {
     let mut interfaces = Vec::new();
 
@@ -92,9 +105,9 @@ pub fn get_network_interfaces() -> Vec<(String, IpAddr)> {
                 if let Some(name) = iface.ifa_name.as_ref() {
                     let iface_name = CStr::from_ptr(name).to_string_lossy().into_owned();
 
+                    // Read IPv4 & IPv6 Address
                     if !iface.ifa_addr.is_null() {
                         let sockaddr = &*(iface.ifa_addr as *const sockaddr);
-
                         let ip_addr = match sockaddr.sa_family as i32 {
                             AF_INET => {
                                 let sin = *(iface.ifa_addr as *const libc::sockaddr_in);
@@ -125,6 +138,7 @@ pub fn get_network_interfaces() -> Vec<(String, IpAddr)> {
 /// Get now network interfaces a Upload & Download speed
 fn read_net_stat(interface: &str, stat: &str) -> Option<f64> {
     let path = format!("/sys/class/net/{}/statistics/{}", interface, stat);
+
     if Path::new(&path).exists() {
         fs::read_to_string(path)
             .ok()
@@ -134,10 +148,11 @@ fn read_net_stat(interface: &str, stat: &str) -> Option<f64> {
     }
 }
 
-/// 取得網路速度資訊
+/// Get Network received & transmitted Speed
 pub fn get_speed() -> Vec<(String, f64, f64)> {
     let mut speed_info = Vec::new();
-    let interfaces = fs::read_dir("/sys/class/net") 
+    let dir_path = "/sys/class/net";
+    let interfaces = fs::read_dir(dir_path) 
         .ok()
         .into_iter()
         .flatten(); 
@@ -174,10 +189,11 @@ fn get_mac_address(interface: &str) -> Option<String> {
     }
 }
 
-/// 取得所有網卡的 MAC 地址
+/// Get Network interface a Mac Address
 pub fn get_macaddress() -> Vec<(String, String)> {
     let mut mac_info = Vec::new();
-    let interfaces = fs::read_dir("/sys/class/net") 
+    let dir_path = "/sys/class/net";
+    let interfaces = fs::read_dir(dir_path) 
         .ok()
         .into_iter()
         .flatten(); 
@@ -201,7 +217,9 @@ pub fn get_macaddress() -> Vec<(String, String)> {
 
 /// Get DNS nameservers
 pub fn get_nameservers() -> Vec<String> {
-    match File::open("/etc/resolv.conf") {
+    let nameserver =  "/etc/resolv.conf";
+
+    match File::open(nameserver) {
         Ok(file) => {
             let reader = BufReader::new(file);
             reader

@@ -140,7 +140,7 @@ pub fn read_cpu_arch() -> String {
         };
 
         if uname(&mut uts) == 0 {
-            let output = CStr::from_ptr(uts.machine.as_ptr()).to_string_lossy().into_owned();
+            let output = CStr::from_ptr(uts.machine.as_ptr()).to_string_lossy().into_owned(); // CPU Architecture
             return output;
         }
     }

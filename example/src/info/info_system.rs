@@ -4,7 +4,7 @@ use dmisys::*;
 pub fn output_msg() {
     let (days_up, hours_up, minutes_up) = systime::read_systime_up();
     //let (days_unix, hours_unix, minutes_unix) = systime::read_systime_boot();
-    let (io_write, io_read) = os::read_io_speed();
+    let (io_write, io_read)= os::read_io_speed();
 
     println!("\n{}", "System Information".green().bold());
     println!("{}", "=================".green());

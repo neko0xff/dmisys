@@ -8,8 +8,7 @@ use std::{
 /// use command get PCI device list
 fn run_cmd_devicepci() -> String {
     let output = Command::new("sh")
-        .arg("-c")
-        .arg("lspci")
+        .args(&["-c", "lspci"])
         .output()
         .expect("Failed to execute command");
 
