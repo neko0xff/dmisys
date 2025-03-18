@@ -6,20 +6,25 @@ use std::{
 
 /// Read the output of xrandr command and parse the resolution
 fn read_cmd_xrandr() -> Result<String, std::io::Error> {
-    let output = Command::new("xrandr").arg("--current").output()?;
+    let output = Command::new("xrandr")
+        .arg("--current")
+        .output()?;
 
     Ok(String::from_utf8_lossy(&output.stdout).to_string())
 }
 
 /// Read the output of xdpyinfo command and parse the resolution
 fn read_cmd_xdpyinfo() -> Result<String, std::io::Error> {
-    let output = Command::new("xdpyinfo").output()?;
+    let output = Command::new("xdpyinfo")
+        .output()?;
 
     Ok(String::from_utf8_lossy(&output.stdout).to_string())
 }
 
 fn read_cmd_xserver() -> Result<String, io::Error> {
-    let output = Command::new("X").arg("-version").output()?;
+    let output = Command::new("X")
+        .arg("-version")
+        .output()?;
 
     let result = format!(
         "{}{}",

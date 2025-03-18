@@ -8,7 +8,14 @@ use std::{
 pub fn check_used_exists(path: &str) -> bool {
     let metadata = fs::metadata(path);
 
-    metadata.is_ok()
+    match metadata {
+        Ok(_m) => {
+            return true;
+        }
+        Err(_e) => {
+            return false;
+        }   
+    }
 }
 
 /// check this file type
@@ -50,7 +57,9 @@ pub fn check_directory(dir_path: &str) -> Result<Vec<String>, io::Error> {
 
 /// check directory is null
 pub fn check_directory_null(dir_path: &str) -> bool {
-    match check_directory(dir_path) {
+    let dir = check_directory(dir_path);
+
+    match dir {
         Ok(entries) => entries.is_empty(),
         Err(_e) => false,
     }
@@ -58,19 +67,22 @@ pub fn check_directory_null(dir_path: &str) -> bool {
 
 /// read & return path a file data
 pub fn return_pathdata(path: &str) -> String {
-    let data = fs::read_to_string(path).unwrap_or_else(|_| "Unknown".to_string());
-    let output = data.trim().to_string();
+    let data = fs::read_to_string(path);
 
-    output
+    match data {
+        Ok(content) => content.trim().to_string(),
+        Err(_) => "Unknown".to_string()
+    }
 }
 
 /// read config file infomation
 pub fn read_config_info(file: &str) -> String {
-    if let Ok(contents) = fs::read_to_string(file) {
-        return contents;
-    }
+    let config = fs::read_to_string(file);
 
-    "Unknown".to_string()
+    match config {
+        Ok(contents) => contents,
+        Err(_) => "Unknown".to_string(),
+    }
 }
 
 /// read config file a value(String)

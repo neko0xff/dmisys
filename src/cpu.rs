@@ -29,6 +29,8 @@ pub fn read_cpu_model() -> String {
                     .trim()
                     .to_string();
                 return output;
+            } else {
+                
             }
         }
     }
@@ -53,12 +55,14 @@ pub fn read_cpu_cores() -> u64 {
                         .parse::<u64>()
                         .unwrap_or(0);
                     return output;
+                } else {
+                    
                 }
             }
         }
     }
 
-    0
+   0
 }
 
 /// CPU Threads
@@ -78,6 +82,8 @@ pub fn read_cpu_threads() -> u64 {
                         .parse::<u64>()
                         .unwrap_or(0);
                     return output;
+                } else {
+                   
                 }
             }
         }
@@ -104,6 +110,8 @@ pub fn get_cpu_frequency() -> f64 {
                         .unwrap_or(0.0);
                     let output = mhz / 1000.0;
                     return output;
+                } else {
+                    
                 }
             }
         }
@@ -115,16 +123,17 @@ pub fn get_cpu_frequency() -> f64 {
 /// CPU Load Average (1 minutes)
 pub fn get_cpu_loading() -> f64 {
     let mut loads: [f64; 1] = [0.0]; 
-    let cpu_cores = unsafe { sysconf(_SC_NPROCESSORS_ONLN) } as f64; 
+    let cpu_cores = unsafe { 
+        sysconf(_SC_NPROCESSORS_ONLN) 
+    } as f64; 
 
     unsafe {
         if getloadavg(loads.as_mut_ptr(), 1) == 1 {
-            let load_avg = loads[0] / cpu_cores * 100.0; 
-            return load_avg;
+            loads[0] / cpu_cores * 100.0
+        } else {
+            0.0
         }
     }
-
-    0.0 
 }
 
 /// CPU Architecture
@@ -140,10 +149,9 @@ pub fn read_cpu_arch() -> String {
         };
 
         if uname(&mut uts) == 0 {
-            let output = CStr::from_ptr(uts.machine.as_ptr()).to_string_lossy().into_owned(); // CPU Architecture
-            return output;
+            CStr::from_ptr(uts.machine.as_ptr()).to_string_lossy().into_owned() // cpu architecture
+        } else {
+            "Unknown".to_string()
         }
     }
-
-    "Unknown".to_string()
 }

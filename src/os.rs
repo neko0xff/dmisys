@@ -12,6 +12,25 @@ use libc::{
 };
 use chrono::DateTime;
 
+/// Disk IO read & write
+fn read_dir_disk() -> (u64, u64) {
+    let data = fs::read_to_string("/proc/diskstats");
+    let mut total_read = 0u64;
+    let mut total_write = 0u64;
+    for line in data.expect("REASON").lines() {
+        let parts: Vec<&str> = line.split_whitespace().collect();
+        if parts.len() < 14 {
+            continue;
+        }
+        let device_name = parts[2];
+        if !device_name.contains("loop") {
+            total_read += parts[5].parse::<u64>().unwrap_or(0); 
+            total_write += parts[9].parse::<u64>().unwrap_or(0); 
+        }
+    }
+
+    (total_read, total_write)
+}
 
 /// Read OS release information
 pub fn read_release() -> String {
@@ -41,12 +60,11 @@ pub fn read_osname() -> String {
         };
 
         if uname(&mut uts) == 0 {
-            let output = CStr::from_ptr(uts.sysname.as_ptr()).to_string_lossy().into_owned(); //os name
-            return output;
-        }
+            CStr::from_ptr(uts.sysname.as_ptr()).to_string_lossy().into_owned() //os name
+        } else {
+            "Unknown".to_string()
+        } 
     }
-
-    "Unknown".to_string()
 }
 
 /// Read Hostname
@@ -62,12 +80,11 @@ pub fn read_hostname() -> String {
         };
 
         if uname(&mut uts) == 0 {
-            let output = CStr::from_ptr(uts.nodename.as_ptr()).to_string_lossy().into_owned(); // host name
-            return output;
+            CStr::from_ptr(uts.nodename.as_ptr()).to_string_lossy().into_owned() // host name
+        } else {
+            "Unknown".to_string()
         }
     }
-
-    "Unknown".to_string()
 }
 
 /// Read kernel version
@@ -83,33 +100,13 @@ pub fn read_kernel() -> String {
         };
 
         if uname(&mut uts) == 0 {
-            let output = CStr::from_ptr(uts.release.as_ptr()).to_string_lossy().into_owned(); // kernel version
-            return output;
+            CStr::from_ptr(uts.release.as_ptr()).to_string_lossy().into_owned() // kernel version
+        } else {
+            "Unknown".to_string()
         }
     }
-
-    "Unknown".to_string()
 }
 
-/// Disk IO read & write
-fn read_dir_disk() -> (u64, u64) {
-    let data = fs::read_to_string("/proc/diskstats");
-    let mut total_read = 0u64;
-    let mut total_write = 0u64;
-    for line in data.expect("REASON").lines() {
-        let parts: Vec<&str> = line.split_whitespace().collect();
-        if parts.len() < 14 {
-            continue;
-        }
-        let device_name = parts[2];
-        if !device_name.contains("loop") {
-            total_read += parts[5].parse::<u64>().unwrap_or(0); 
-            total_write += parts[9].parse::<u64>().unwrap_or(0); 
-        }
-    }
-
-    (total_read, total_write)
-}
 
 /// Disk IO Speed
 /// test cmd: $ dd if=/dev/zero of=testfile bs=1M count=10000 && sync
@@ -133,6 +130,8 @@ pub fn system_starttime() -> String {
         for line in contents.lines() {
             if let Some(time) = line.strip_prefix("btime ") {
                 return time.trim().to_string();
+            } else {
+                
             }
         }
     }
@@ -153,12 +152,13 @@ pub fn system_starttime_utc() -> String {
 
                     if let Some(dt) = datetime {
                         return dt.format("%Y-%m-%d  %H:%M:%S").to_string();
+                    } else {
+
                     }
                 }
             }
         }
     }
-
     "Unknown".to_string()
 }
 

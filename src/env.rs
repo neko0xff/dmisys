@@ -38,16 +38,12 @@ pub fn read_env_shellver() -> String {
 
 /// read now Environment value
 pub fn read_env_var(key: String) -> String {
-    let output: String;
     let key_var = env::var(&key);
 
-    if let Ok(value) = key_var {
-        output = value;
-    } else {
-        output = "Unknown".to_string();
+    match key_var {
+        Ok(value) => value,
+        Err(_) => "Unknown".to_string()
     }
-
-    output
 }
 
 /// User Home Directory
