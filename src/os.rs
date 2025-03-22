@@ -32,7 +32,7 @@ fn read_dir_disk() -> (u64, u64) {
     (total_read, total_write)
 }
 
-/// Read OS release information
+/// Read: OS release information
 pub fn read_release() -> String {
     let file = "/etc/os-release";
 
@@ -47,7 +47,7 @@ pub fn read_distro_name() -> String {
     file::read_config_var_string(file, find)
 }
 
-/// Read OS name
+/// Read: OS name
 pub fn read_osname() -> String {
     unsafe {
         let mut uts = utsname {
@@ -67,7 +67,7 @@ pub fn read_osname() -> String {
     }
 }
 
-/// Read Hostname
+/// Read: Hostname
 pub fn read_hostname() -> String {
     unsafe {
         let mut uts = utsname {
@@ -87,7 +87,7 @@ pub fn read_hostname() -> String {
     }
 }
 
-/// Read kernel version
+/// Read: Kernel Version
 pub fn read_kernel() -> String {
     unsafe {
         let mut uts = utsname {
@@ -122,7 +122,7 @@ pub fn read_io_speed() -> (f64, f64) {
   (read_mb, write_mb)
 }
 
-/// System start time
+/// Read: System start time
 pub fn system_starttime() -> String {
     let path =  "/proc/stat";
 
@@ -139,7 +139,7 @@ pub fn system_starttime() -> String {
     "Unknown".to_string()
 }
 
-/// System start time(UTC)
+/// Read: System start time(UTC)
 pub fn system_starttime_utc() -> String {
     let path =  "/proc/stat";
 

@@ -14,12 +14,6 @@ pub fn output_msg() {
     );
     println!(
         "{:<15} {:.2}MB ({:.2}%)",
-        "Free:".blue().bold(),
-        memory_read.free_memory(),
-        memory_read.free_memory_percent()
-    );
-    println!(
-        "{:<15} {:.2}MB ({:.2}%)",
         "Available:".blue().bold(),
         memory_read.available_memory(),
         memory_read.available_memory_percent()
@@ -40,9 +34,9 @@ pub fn output_msg() {
     );
     println!(
         "{:<15} {:.2}MB ({:.2}%)",
-        "Free:".blue().bold(),
-        memory_read.free_swap(),
-        memory_read.free_swap_percent()
+        "Available:".blue().bold(),
+        memory_read.available_swap(),
+        memory_read.available_swap_percent()
     );
     println!(
         "{:<15} {:.2}MB",

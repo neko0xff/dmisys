@@ -1,9 +1,10 @@
 use crate::cv;
-use sysinfo::System;
+use std::{
+    collections::HashMap,
+    fs
+};
 
-pub struct Info {
-    pub sys: System,
-}
+pub struct Info;
 
 impl Default for Info {
     fn default() -> Self {
@@ -13,102 +14,113 @@ impl Default for Info {
 
 impl Info {
     pub fn new() -> Self {
-        let sys = System::new_all();
-        Info { sys }
+        Info
     }
 
-    /// total installed memory space(MB)
+    /// read /proc/meminfo
+    fn read_dir_meminfo() -> Option<HashMap<String, u64>> {
+        let content = fs::read_to_string("/proc/meminfo").ok()?;
+        let mut meminfo = HashMap::new();
+        
+        for line in content.lines() {
+            if let Some((key, value)) = line.split_once(':') {
+                let value = value.trim().split_whitespace().next()?.parse::<u64>().ok()?;
+                meminfo.insert(key.to_string(), value);
+            }
+        }
+
+        match  meminfo.is_empty() {
+            true => None,
+            false => Some(meminfo)
+        }
+    }
+
+    /// Memory: Total(MB)
     pub fn total_memory(&self) -> f64 {
-        cv::bytes_to_mb(self.sys.total_memory())
+        Info::read_dir_meminfo()
+            .and_then(|m| m.get("MemTotal").cloned())
+            .map_or(0.0, |v| cv::bytes_to_mb(v * 1024))
     }
 
-    /// used installed memory space (MB)
-    pub fn used_memory(&self) -> f64 {
-        cv::bytes_to_mb(self.sys.used_memory())
-    }
-
-    /// used installed memory space (percentage)
-    pub fn used_memory_percent(&self) -> f64 {
-        let used = self.used_memory() as f64;
-        let total = self.total_memory() as f64;
-
-        if total == 0.0 {
-            0.0
-        } else {
-            cv::percentage_cal(used, total)
-        }
-    }
-
-    /// free installed memory space (MB)
-    pub fn free_memory(&self) -> f64 {
-        cv::bytes_to_mb(self.sys.free_memory())
-    }
-
-    /// free installed memory space (percentage)
-    pub fn free_memory_percent(&self) -> f64 {
-        let free_memory = self.free_memory() as f64;
-        let total_memory = self.total_memory() as f64;
-
-        if total_memory == 0.0 {
-            0.0
-        } else {
-            cv::percentage_cal(free_memory, total_memory)
-        }
-    }
-
-    /// available installed memory space (MB)
+    /// Memory:  Available(MB)
     pub fn available_memory(&self) -> f64 {
-        cv::bytes_to_mb(self.sys.available_memory())
+        Info::read_dir_meminfo()
+            .and_then(|m| m.get("MemAvailable").cloned())
+            .map_or(0.0, |v| cv::bytes_to_mb(v * 1024))
     }
 
-    /// available installed memory space (percentage)
+    /// Memory: Used(MB)
+    pub fn used_memory(&self) -> f64 {
+        let total = self.total_memory();
+        let available = self.available_memory();
+        let used = total - available;
+
+        used
+    }
+
+    /// Memory: Available(%)
     pub fn available_memory_percent(&self) -> f64 {
-        let available_memory = self.available_memory() as f64;
-        let total_memory = self.total_memory() as f64;
+        let available = self.available_memory();
+        let total = self.total_memory();
 
-        if total_memory == 0.0 {
-            0.0
-        } else {
-            cv::percentage_cal(available_memory, total_memory)
+        match total {
+            0.0 => 0.0,
+            _ => cv::percentage_cal(available, total)
         }
     }
 
-    /// total swap space (MB)
+    /// Memory: Used (%)
+    pub fn used_memory_percent(&self) -> f64 {
+        let used = self.used_memory();
+        let total = self.total_memory();
+        match total {
+            0.0 => 0.0,
+            _ => cv::percentage_cal(used, total)
+        }
+    }
+
+    ///  Swap: Total (MB)
     pub fn total_swap(&self) -> f64 {
-        cv::bytes_to_mb(self.sys.total_swap())
+        Info::read_dir_meminfo()
+            .and_then(|m| m.get("SwapTotal").cloned())
+            .map_or(0.0, |v| cv::bytes_to_mb(v * 1024))
     }
 
-    /// Free swap space
-    pub fn free_swap(&self) -> f64 {
-        cv::bytes_to_mb(self.sys.free_swap())
+    /// Swap: Available (MB)
+    pub fn available_swap(&self) -> f64 {
+        Info::read_dir_meminfo()
+            .and_then(|m| m.get("SwapFree").cloned())
+            .map_or(0.0, |v| cv::bytes_to_mb(v * 1024))
     }
 
-    /// Free swap space (percentage)
-    pub fn free_swap_percent(&self) -> f64 {
-        let free_swap = self.free_swap() as f64;
-        let total_swap = self.total_swap() as f64;
+    /// Swap:  Used(MB)
+    pub fn used_swap(&self) -> f64 {
+        let total = self.total_swap();
+        let available= self.available_swap();
+        let used = total -  available;
 
-        if total_swap == 0.0 {
-            0.0
-        } else {
-            cv::percentage_cal(free_swap, total_swap)
+        used
+    }
+
+    /// Swap: Used(%)
+    pub fn used_swap_percent(&self) -> f64 {
+        let used = self.used_swap();
+        let total = self.total_swap();
+
+        match total {
+            0.0 => 0.0,
+            _ => cv::percentage_cal(used, total)
         }
     }
 
-    /// Used a swap space
-    pub fn used_swap(&self) -> f64 {
-        cv::bytes_to_mb(self.sys.used_swap())
-    }
+    /// Swap: Available(%)
+    pub fn available_swap_percent(&self) -> f64 {
+        let free = self.available_swap();
+        let total = self.total_swap();
 
-    /// Used a swap space (percentage)
-    pub fn used_swap_percent(&self) -> f64 {
-        let used = self.used_swap() as f64;
-        let total = self.total_swap() as f64;
-
-        if total == 0.0 {
-            0.0
-        } else {
-            cv::percentage_cal(used, total)
+        match total {
+            0.0 => 0.0,
+            _ => cv::percentage_cal(free, total)
         }
     }
 }
