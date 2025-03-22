@@ -19,7 +19,9 @@ fn main() {
     // 指定參數的輸出內容
     if arg_output == Some("system") {
         info_system::output_msg();
-    } else if arg_output == Some("network") {
+    } else if arg_output == Some("audio") {
+        info_audio::output_msg();
+    }else if arg_output == Some("network") {
         info_network::output_msg();
     } else if arg_output == Some("cpu") {
         info_cpu::output_msg();
@@ -42,6 +44,7 @@ fn main() {
     // 如果未指定輸出或輸出`all`,則輸出
     if arg_output.is_none() || arg_output == Some("all") {
         info_system::output_msg();
+        info_audio::output_msg();
         info_desktop::output_msg();
         info_env::output_msg();
         info_network::output_msg();

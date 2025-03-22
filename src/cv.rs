@@ -74,6 +74,11 @@ pub fn ma_to_ua(ma: usize) -> f64 {
     (ma as f64) * 1_000.0
 }
 
+/// Unit conversion: Converts ns to sec
+pub fn ns_to_sec(time:u64) -> u64 {
+    time/ 1_000_000
+}
+
 /// data struct: usize to bool
 pub fn usize_to_bool(n: usize) -> bool {
     let mut out = false;
@@ -107,6 +112,15 @@ pub fn format_times(time: u64) -> (u64, u64, u64) {
     let minutes = sec_to_mins(time);
 
     (days, hours, minutes)
+}
+
+/// format : time(hour,minutes,seconds)
+pub fn sec_to_playingtime(time:u64) -> (u64,u64,u64) {
+    let hours = time / 3600;
+    let minutes = (time % 3600) / 60;
+    let seconds = time % 60;
+
+    (hours,minutes,seconds)
 }
 
 /// format: message

@@ -66,3 +66,4 @@ pub mod supply;
 pub mod systime;
 pub mod web;
 pub mod opengl;
+pub mod audio;
