@@ -208,7 +208,7 @@ pub fn get_macaddress() -> Vec<(String, String)> {
     }
 
     if mac_info.is_empty() {
-        mac_info.push(("Not Found".to_string(), "".to_string()));
+       mac_info.push(("Not Found".to_string(), "".to_string()));
     }
 
     mac_info

@@ -108,6 +108,6 @@ pub fn read_audio_art_url() ->  String {
 pub fn read_audio_length() -> String {
     match cal_audio_length() {
         Ok(length) => length,
-        Err(_) => "Failed to parse length as number".to_string()
+        Err(_) => "Failed to parse length".to_string()
     }
 }

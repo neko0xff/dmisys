@@ -85,6 +85,13 @@ pub fn read_config_info(file: &str) -> String {
     }
 }
 
+/// read dmi path
+pub fn read_dmi_path(value: &str) -> String {
+    let dmi = format!("/sys/class/dmi/id/{}", value);
+
+    return_pathdata(&dmi)
+}
+
 /// read config file a value(String)
 pub fn read_config_var_string(file: &str, find: &str) -> String {
     if let Ok(contents) = fs::read_to_string(file) {
