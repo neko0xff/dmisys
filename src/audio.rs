@@ -17,6 +17,13 @@ fn run_playerctl_command(format: &str) -> Result<String, String> {
     }
 }
 
+fn var_cv_string(value:&str) -> String {
+    match run_playerctl_command(value) {
+        Ok(output) => output,
+        Err(_) => "Not Found".to_string()
+    }
+}
+
 fn cal_audio_length() -> Result<String, String> {
     match run_playerctl_command("{{mpris:length}}") {
         Ok(length_str) => {
@@ -34,74 +41,47 @@ fn cal_audio_length() -> Result<String, String> {
 
 /// Audio: Track ID
 pub fn read_audio_trackid() -> String {
-    match run_playerctl_command("{{mpris:trackid}}") {
-        Ok(trackid) => trackid,
-        Err(_) => "Not Found".to_string()
-    }
+    var_cv_string("{{mpris:trackid}}")
 }
 
 /// Audio: Track number
 pub fn read_audio_tracknum() -> String {
-    match run_playerctl_command("{{xesam:tracknumber}}") {
-        Ok(tracknumber) => tracknumber,
-        Err(_) => "Not Found".to_string()
-    }
+    var_cv_string("{{xesam:tracknumber}}")
 }
 
 /// Audio: Title
 pub fn read_audio_title() -> String {
-    match run_playerctl_command("{{xesam:title}}") {
-        Ok(title) => title,
-        Err(_) => "Not Found".to_string()
-    }
+    var_cv_string("{{xesam:title}}")
 }
 
 /// Audio: Source URL
 pub fn read_audio_sourceurl() ->  String {
-    match run_playerctl_command("{{xesam:url}}") {
-        Ok(source) => source,
-        Err(_) => "Not Found".to_string()
-    }
+    var_cv_string("{{xesam:url}}")
 }
 
 /// Audio: Album
 pub fn read_audio_album() ->  String {
-    match run_playerctl_command("{{xesam:album}}") {
-        Ok(album) => album,
-        Err(_) => "Not Found".to_string()
-    }
+    var_cv_string("{{xesam:album}}")
 }
 
 /// Audio: Artist
 pub fn read_audio_artist() ->  String {
-    match run_playerctl_command("{{xesam:artist}}") {
-        Ok(artist) => artist,
-        Err(_) => "Not Found".to_string()
-    }
+    var_cv_string("{{xesam:artist}}")
 }
 
 /// Audio: Genre
 pub fn read_audio_genre() ->  String {
-    match run_playerctl_command("{{xesam:genre}}") {
-        Ok(genre) => genre,
-        Err(_) => "Not Found".to_string()
-    }
+    var_cv_string("{{xesam:genre}}")
 }
 
 /// Audio: Content Created
 pub fn read_audio_content_created() ->  String {
-    match run_playerctl_command("{{xesam:contentCreated}}") {
-        Ok(contentcreated) => contentcreated,
-        Err(_) => "Not Found".to_string()
-    }
+    var_cv_string("{{xesam:contentCreated}}")
 }
 
 /// Audio: Album Image URL
 pub fn read_audio_art_url() ->  String {
-    match run_playerctl_command("{{mpris:artUrl}}") {
-        Ok(arturl) => arturl,
-        Err(_) => "Not Found".to_string()
-    }
+    var_cv_string("{{mpris:artUrl}}")
 }
 
 /// Audio: Length Time
