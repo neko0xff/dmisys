@@ -1,45 +1,35 @@
 use crate::file;
 
-/// Read ADP information from /sys/class/power_supply/ADP\[number]\/uevent
-pub fn read_adp_info(adp_number: u8) -> String {
-    let read_adp = format!("ADP{}", adp_number);
-    let file = format!("/sys/class/power_supply/{}/uevent", read_adp);
-
-    file::read_config_info(&file)
+/// Read ADP information from /sys/class/power_supply/ADP[number]/uevent
+fn read_adp_info(adp_number: u8) -> String {
+    file::read_power_path("ADP",adp_number)
 }
 
-/// Read ADP device type
+/// Extract a specific value from ADP information
+fn read_adp_value(adp_number: u8, key: &str) -> String {
+    let path = read_adp_info(adp_number);
+    file::read_config_var_string(&path, key)
+}
+
+/// ADP: device type
 pub fn read_adp_devtype(adp_number: u8) -> String {
-    let read_adp = format!("ADP{}", adp_number);
-    let file = format!("/sys/class/power_supply/{}/uevent", read_adp);
-    let find = "DEVTYPE=";
-
-    file::read_config_var_string(&file, find)
+    read_adp_value(adp_number, "DEVTYPE=")
 }
 
-/// Read ADP device name
+/// ADP: device name
 pub fn read_adp_name(adp_number: u8) -> String {
-    let read_adp = format!("ADP{}", adp_number);
-    let file = format!("/sys/class/power_supply/{}/uevent", read_adp);
-    let find = "POWER_SUPPLY_NAME=";
-
-    file::read_config_var_string(&file, find)
+    read_adp_value(adp_number, "POWER_SUPPLY_NAME=")
 }
 
-/// Read ADP device type
+/// ADP: power supply type
 pub fn read_adp_type(adp_number: u8) -> String {
-    let read_adp = format!("ADP{}", adp_number);
-    let file = format!("/sys/class/power_supply/{}/uevent", read_adp);
-    let find = "POWER_SUPPLY_TYPE=";
-
-    file::read_config_var_string(&file, find)
+    read_adp_value(adp_number, "POWER_SUPPLY_TYPE=")
 }
 
-/// check the ADP online status(online, offline)
+/// ADP: device status
+/// Return:  true == online, false == offline
 pub fn read_adp_online(adp_number: u8) -> bool {
-    let read_adp = format!("ADP{}", adp_number);
-    let file = format!("/sys/class/power_supply/{}/uevent", read_adp);
-    let find = "POWER_SUPPLY_ONLINE=";
+    let path = read_adp_info(adp_number);
 
-    file::read_config_var_bool(&file, find)
+    file::read_config_var_bool(&path, "POWER_SUPPLY_ONLINE=")
 }

@@ -139,6 +139,6 @@ pub fn read_env_chromepath() -> String {
 
 
 /// dmisys libary Version
-pub fn read_env_dmisys() -> &'static str {
-    env!("CARGO_PKG_VERSION")
+pub fn read_env_dmisys() -> String {
+    env::var("CARGO_PKG_VERSION").unwrap_or("Unknown".to_string())
 }

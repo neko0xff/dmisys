@@ -85,6 +85,13 @@ pub fn read_config_info(file: &str) -> String {
     }
 }
 
+/// read power device
+pub fn read_power_path(device: &str, number: u8) -> String {
+    let path = format!("/sys/class/power_supply/{}{}/uevent", device, number.to_string());
+
+    path
+}
+
 /// read dmi path
 pub fn read_dmi_path(value: &str) -> String {
     let dmi = format!("/sys/class/dmi/id/{}", value);

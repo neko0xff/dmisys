@@ -28,7 +28,7 @@ pub fn read_opengl_vendor() -> String {
     vendor
 }
 
-/// OpenGL Renderer
+/// OpenGL: Renderer Device
 pub fn read_opengl_rendererdevice() -> String {
     let output = read_cmd_glxinfo();
     let regex_pattern = r"OpenGL renderer string: (.*)";

@@ -4,7 +4,8 @@ use std::{
     process::Command,
     ffi::CStr,
     thread::sleep,
-    time::Duration
+    time::Duration,
+    env
 };
 use libc::{
     uname, 
@@ -174,6 +175,6 @@ pub fn read_os_init() -> String {
     }
 }
 
-pub fn read_terminal() -> &'static str {
-    env!("TERM")
+pub fn read_terminal() -> String {
+    env::var("TERM").unwrap_or("Unknown".to_string())
 }

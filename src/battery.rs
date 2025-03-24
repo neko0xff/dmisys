@@ -3,170 +3,147 @@ use crate::{
     file
 };
 
+/// Read BAT information from /sys/class/power_supply/ADP[number]/uevent
+fn read_bat_path(bat_number: u8) -> String {
+    file::read_power_path("BAT",bat_number)
+}
+
 /// Read battery information from /sys/class/power_supply/BAT\[number]\/uevent
 pub fn read_bat_info(bat_number: u8) -> String {
-    let read_bat = format!("BAT{}", bat_number);
-    let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
+    let path = read_bat_path(bat_number);
 
-    file::read_config_info(&file)
+    file::read_config_info(&path)
+}
+
+/// Extract a specific value from ADP information
+fn read_bat_value(bat_number: u8, key: &str) -> String {
+    let path = read_bat_path(bat_number);
+    file::read_config_var_string(&path, key)
 }
 
 /// Read battery device type
 pub fn read_bat_devtype(bat_number: u8) -> String {
-    let read_bat = format!("BAT{}", bat_number);
-    let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
-    let find = "DEVTYPE=";
-
-    file::read_config_var_string(&file, find)
+    read_bat_value(bat_number, "DEVTYPE=")
 }
 
 /// Read battery device name
 pub fn read_bat_name(bat_number: u8) -> String {
-    let read_bat = format!("BAT{}", bat_number);
-    let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
-    let find = "POWER_SUPPLY_NAME=";
-
-    file::read_config_var_string(&file, find)
+    read_bat_value(bat_number, "POWER_SUPPLY_NAME=")
 }
 
 /// Read battery type
 pub fn read_bat_type(bat_number: u8) -> String {
-    let read_bat = format!("BAT{}", bat_number);
-    let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
-    let find = "POWER_SUPPLY_TYPE=";
-
-    file::read_config_var_string(&file, find)
+    read_bat_value(bat_number, "POWER_SUPPLY_TYPE=")
 }
 
 /// Read battery status(charging, discharging, full, etc.)
 pub fn read_bat_status(bat_number: u8) -> String {
-    let read_bat = format!("BAT{}", bat_number);
-    let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
-    let find = "POWER_SUPPLY_STATUS=";
-
-    file::read_config_var_string(&file, find)
+    read_bat_value(bat_number, "POWER_SUPPLY_STATUS=")
 }
 
 /// Read battery present status
 pub fn read_bat_present(bat_number: u8) -> bool {
-    let read_bat = format!("BAT{}", bat_number);
-    let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
-    let find = "POWER_SUPPLY_PRESENT=";
+    let path = read_bat_path(bat_number);
 
-    file::read_config_var_bool(&file, find)
+    file::read_config_var_bool(&path, "POWER_SUPPLY_PRESENT=")
 }
 
 /// Read battery use technology
 pub fn read_bat_technology(bat_number: u8) -> String {
-    let read_bat = format!("BAT{}", bat_number);
-    let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
-    let find = "POWER_SUPPLY_TECHNOLOGY=";
-
-    file::read_config_var_string(&file, find)
+    read_bat_value(bat_number, "POWER_SUPPLY_TECHNOLOGY=")
 }
 
 /// Read battery used charge cycle count
 pub fn read_bat_cyclecount(bat_number: u8) -> usize {
-    let read_bat = format!("BAT{}", bat_number);
-    let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
+    let path = read_bat_path(bat_number);
     let find = "POWER_SUPPLY_CYCLE_COUNT=";
 
-    file::read_config_var_usize(&file, find)
+    file::read_config_var_usize(&path, find)
 }
 
 /// check the battery voltage min design
 pub fn read_bat_volt_min(bat_number: u8) -> f64 {
-    let read_bat = format!("BAT{}", bat_number);
-    let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
+    let path = read_bat_path(bat_number);
     let find = "POWER_SUPPLY_VOLTAGE_MIN_DESIGN=";
-    let num = file::read_config_var_usize(&file, find);
+    let num = file::read_config_var_usize(&path, find);
 
     cv::uv_to_volts(num)
 }
 
 /// check the battery voltage now
 pub fn read_bat_volt_now(bat_number: u8) -> f64 {
-    let read_bat = format!("BAT{}", bat_number);
-    let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
+    let path = read_bat_path(bat_number);
     let find = "POWER_SUPPLY_VOLTAGE_NOW=";
-    let num = file::read_config_var_usize(&file, find);
+    let num = file::read_config_var_usize(&path, find);
 
     cv::uv_to_volts(num)
 }
 
 /// check the battery charge now
 pub fn read_bat_charge_now(bat_number: u8) -> f64 {
-    let read_bat = format!("BAT{}", bat_number);
-    let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
+    let path = read_bat_path(bat_number);
     let find = "POWER_SUPPLY_CHARGE_NOW=";
-    let num = file::read_config_var_usize(&file, find);
+    let num = file::read_config_var_usize(&path, find);
 
     cv::uah_to_mah(num)
 }
 
 /// check the battery charge full design
 pub fn read_bat_charge_full_design(bat_number: u8) -> f64 {
-    let read_bat = format!("BAT{}", bat_number);
-    let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
+    let path = read_bat_path(bat_number);
     let find = "POWER_SUPPLY_CHARGE_FULL_DESIGN=";
-    let num = file::read_config_var_usize(&file, find);
+    let num = file::read_config_var_usize(&path, find);
 
     cv::uah_to_mah(num)
 }
 
 /// check the battery capacity
 pub fn read_bat_capacity(bat_number: u8) -> usize {
-    let read_bat = format!("BAT{}", bat_number);
-    let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
+    let path = read_bat_path(bat_number);
     let find = "POWER_SUPPLY_CAPACITY=";
 
-    file::read_config_var_usize(&file, find)
+    file::read_config_var_usize(&path, find)
 }
 
 /// check the battery capacity level in percent
 pub fn read_bat_capacity_lv(bat_number: u8) -> String {
-    let read_bat = format!("BAT{}", bat_number);
-    let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
+    let path = read_bat_path(bat_number);
     let find = "POWER_SUPPLY_CAPACITY_LEVEL=";
 
-    file::read_config_var_string(&file, find)
+    file::read_config_var_string(&path, find)
 }
 
 /// check the battery current in ampere
 pub fn read_bat_current_now(bat_number: u8) -> f64 {
-    let read_bat = format!("BAT{}", bat_number);
-    let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
+    let path = read_bat_path(bat_number);
     let find = "POWER_SUPPLY_CURRENT_NOW=";
-    let num = file::read_config_var_usize(&file, find);
+    let num = file::read_config_var_usize(&path, find);
 
     cv::ma_to_a(num)
 }
 
 /// check the battery model name
 pub fn read_bat_model(bat_number: u8) -> String {
-    let read_bat = format!("BAT{}", bat_number);
-    let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
+    let path = read_bat_path(bat_number);
     let find = "POWER_SUPPLY_MODEL_NAME=";
 
-    file::read_config_var_string(&file, find)
+    file::read_config_var_string(&path, find)
 }
 
 /// check the battery manufacturer name
 pub fn read_bat_manufacturer(bat_number: u8) -> String {
-    let read_bat = format!("BAT{}", bat_number);
-    let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
+    let path = read_bat_path(bat_number);
     let find = "POWER_SUPPLY_MANUFACTURER=";
 
-    file::read_config_var_string(&file, find)
+    file::read_config_var_string(&path, find)
 }
 
 /// check the battery serial number
 pub fn read_bat_serialnum(bat_number: u8) -> String {
-    let read_bat = format!("BAT{}", bat_number);
-    let file = format!("/sys/class/power_supply/{}/uevent", read_bat);
+    let path = read_bat_path(bat_number);
     let find = "POWER_SUPPLY_SERIAL_NUMBER=";
 
-    file::read_config_var_string(&file, find)
+    file::read_config_var_string(&path, find)
 }
 
 /// check remaining time of the battery life

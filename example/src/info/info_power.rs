@@ -23,7 +23,7 @@ fn supply_info() {
             let num = adp_number as u8;
             let name = supply::read_adp_name(num);
             let type_ = supply::read_adp_type(num);
-            let online = if supply::read_adp_online(num) {
+            let online = if supply::read_adp_online(num){
                 "Yes"
             } else {
                 "No"
