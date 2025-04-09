@@ -16,6 +16,9 @@ use libc::{
 };
 
 /// CPU Model
+/// This function reads the CPU model information from the `/proc/cpuinfo` file.
+/// It looks for the line starting with "model name" and returns the value as a `String`.
+/// If the line is not found, it returns "Unknown".
 pub fn read_cpu_model() -> String {
     let info_path = "/proc/cpuinfo";
 
@@ -39,6 +42,9 @@ pub fn read_cpu_model() -> String {
 }
 
 /// CPU Cores
+/// This function reads the number of CPU cores from the `/proc/cpuinfo` file.
+/// It looks for the line starting with "cpu cores" and returns the value as a `u64`.
+/// If the line is not found, it returns 0.
 pub fn read_cpu_cores() -> u64 {
     let info_path = "/proc/cpuinfo";
 
@@ -66,6 +72,9 @@ pub fn read_cpu_cores() -> u64 {
 }
 
 /// CPU Threads
+/// This function reads the number of CPU threads from the `/proc/cpuinfo` file.
+/// It looks for the line starting with "siblings" and returns the value as a `u64`.
+/// If the line is not found, it returns 0.
 pub fn read_cpu_threads() -> u64 {
     let info_path = "/proc/cpuinfo";
 
@@ -93,6 +102,9 @@ pub fn read_cpu_threads() -> u64 {
 }
 
 /// CPU Frequency (MHz)
+/// This function reads the CPU frequency information from the `/proc/cpuinfo` file.
+/// It looks for the line starting with "cpu MHz" and returns the value as a `f64`.
+/// If the line is not found, it returns 0.0.
 pub fn get_cpu_frequency() -> f64 {
     let info_path = "/proc/cpuinfo";
 
@@ -121,6 +133,8 @@ pub fn get_cpu_frequency() -> f64 {
 }
 
 /// CPU Load Average (1 minutes)
+/// This function retrieves the CPU load average for the last 1 minute.
+/// It returns the load average as a `f64` value.
 pub fn get_cpu_loading() -> f64 {
     let mut loads: [f64; 1] = [0.0]; 
     let cpu_cores = unsafe { 
@@ -137,6 +151,9 @@ pub fn get_cpu_loading() -> f64 {
 }
 
 /// CPU Architecture
+///  This function retrieves the CPU architecture information using the `uname` function
+/// /// It returns the CPU architecture as a `String`. If the `uname` function fails,
+/// /// it returns "Unknown".
 pub fn read_cpu_arch() -> String {
     unsafe {
         let mut uts = utsname {

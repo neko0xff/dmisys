@@ -1,7 +1,8 @@
 use crate::cv;
 use std::{
     process::Command,
-    io
+    io,
+    env
 };
 
 /// Read the output of xrandr command and parse the resolution
@@ -67,6 +68,9 @@ fn get_info_resolution() -> Option<String> {
 
 
 /// Display Resolution
+/// This function retrieves the display resolution by executing the `xrandr` command.
+/// It captures the output and parses it to extract the current resolution.
+/// If the resolution is found, it returns it as a `String`. Otherwise, it returns "Unknown".
 pub fn read_display_resolution() -> String {
     let output;
 
@@ -79,6 +83,9 @@ pub fn read_display_resolution() -> String {
 }
 
 ///  Xorg Server: Verion
+/// /// This function retrieves the version of the Xorg server by executing the `X -version` command.
+/// It captures the output and parses it to extract the version number.
+/// If the version is found, it returns it as a `String`. Otherwise, it returns "Unknown".
 pub fn read_xserver_ver() -> String{
     let output = read_cmd_xserver().unwrap();
     let regex_pattern = r"(?m)X\.Org X Server (\d+\.\d+\.\d+)\.\d+";
@@ -86,6 +93,11 @@ pub fn read_xserver_ver() -> String{
     cv::regex_extract(&output, regex_pattern)
 }
 
-pub fn read_display_id() -> &'static str {
-    env!("DISPLAY")
+/// Xorg Server: Display ID
+/// This function retrieves the display ID from the environment variable `DISPLAY`.
+pub fn read_display_id() -> String {
+    match env::var("DISPLAY") {
+        Ok(display) => display,
+        Err(_) => "Unknown".to_string(),
+    }
 }

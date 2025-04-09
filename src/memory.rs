@@ -36,6 +36,9 @@ impl Info {
     }
 
     /// Memory: Total(MB)
+    /// This function reads the total memory from `/proc/meminfo` and converts it to megabytes.
+    /// It returns the total memory as a `f64` value.
+    /// If the value is not found, it returns 0.0.
     pub fn total_memory(&self) -> f64 {
         Info::read_dir_meminfo()
             .and_then(|m| m.get("MemTotal").cloned())
@@ -43,6 +46,9 @@ impl Info {
     }
 
     /// Memory:  Available(MB)
+    /// This function reads the available memory from `/proc/meminfo` and converts it to megabytes.
+    /// It returns the available memory as a `f64` value.
+    /// If the value is not found, it returns 0.0.
     pub fn available_memory(&self) -> f64 {
         Info::read_dir_meminfo()
             .and_then(|m| m.get("MemAvailable").cloned())
@@ -50,6 +56,9 @@ impl Info {
     }
 
     /// Memory: Used(MB)
+    /// This function calculates the used memory by subtracting the available memory from the total memory.
+    /// It returns the used memory as a `f64` value.
+    /// If the total memory is not found, it returns 0.0.
     pub fn used_memory(&self) -> f64 {
         let total = self.total_memory();
         let available = self.available_memory();
@@ -59,6 +68,9 @@ impl Info {
     }
 
     /// Memory: Available(%)
+    /// This function calculates the percentage of available memory by dividing the available memory by the total memory.
+    /// It returns the percentage as a `f64` value.
+    /// If the total memory is 0, it returns 0.0.
     pub fn available_memory_percent(&self) -> f64 {
         let available = self.available_memory();
         let total = self.total_memory();
@@ -70,6 +82,9 @@ impl Info {
     }
 
     /// Memory: Used (%)
+    /// This function calculates the percentage of used memory by dividing the used memory by the total memory.
+    /// It returns the percentage as a `f64` value.
+    /// If the total memory is 0, it returns 0.0.
     pub fn used_memory_percent(&self) -> f64 {
         let used = self.used_memory();
         let total = self.total_memory();
@@ -80,6 +95,9 @@ impl Info {
     }
 
     ///  Swap: Total (MB)
+    /// This function reads the total swap memory from `/proc/meminfo` and converts it to megabytes.
+    /// It returns the total swap memory as a `f64` value.
+    /// If the value is not found, it returns 0.0.
     pub fn total_swap(&self) -> f64 {
         Info::read_dir_meminfo()
             .and_then(|m| m.get("SwapTotal").cloned())
@@ -87,6 +105,9 @@ impl Info {
     }
 
     /// Swap: Available (MB)
+    /// This function reads the available swap memory from `/proc/meminfo` and converts it to megabytes.
+    /// It returns the available swap memory as a `f64` value.
+    /// If the value is not found, it returns 0.0.
     pub fn available_swap(&self) -> f64 {
         Info::read_dir_meminfo()
             .and_then(|m| m.get("SwapFree").cloned())
@@ -94,6 +115,9 @@ impl Info {
     }
 
     /// Swap:  Used(MB)
+    /// This function calculates the used swap memory by subtracting the available swap memory from the total swap memory.
+    /// It returns the used swap memory as a `f64` value.
+    /// If the total swap memory is not found, it returns 0.0.
     pub fn used_swap(&self) -> f64 {
         let total = self.total_swap();
         let available= self.available_swap();
@@ -103,6 +127,9 @@ impl Info {
     }
 
     /// Swap: Used(%)
+    /// This function calculates the percentage of used swap memory by dividing the used swap memory by the total swap memory.
+    /// It returns the percentage as a `f64` value.
+    /// If the total swap memory is 0, it returns 0.0.
     pub fn used_swap_percent(&self) -> f64 {
         let used = self.used_swap();
         let total = self.total_swap();
@@ -114,6 +141,9 @@ impl Info {
     }
 
     /// Swap: Available(%)
+    /// This function calculates the percentage of available swap memory by dividing the available swap memory by the total swap memory.
+    /// It returns the percentage as a `f64` value.
+    /// If the total swap memory is 0, it returns 0.0.
     pub fn available_swap_percent(&self) -> f64 {
         let free = self.available_swap();
         let total = self.total_swap();

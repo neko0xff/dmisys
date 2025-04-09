@@ -4,6 +4,10 @@ use std::{
 };
 
 /// Read Command: Use a Shell Version
+/// This function retrieves the version of the shell specified in the environment variable `SHELL`.
+/// It uses the `Command` struct to execute the shell with the `--version` argument.
+/// The output is captured and parsed to extract the version number.
+/// The version string is then returned as a `String`.
 pub fn read_cmd_shellver() -> String {
     let input = read_env_shell();
 
@@ -32,11 +36,15 @@ pub fn read_cmd_shellver() -> String {
 
 
 /// Use a Shell Version
+/// This function retrieves the version of the shell specified in the environment variable `SHELL`.
 pub fn read_env_shellver() -> String {
     read_cmd_shellver()
 }
 
 /// read now Environment value
+/// It uses the `read_cmd_shellver` function to execute the shell with the `--version` argument.
+/// The output is captured and parsed to extract the version number.
+/// The version string is then returned as a `String`.
 pub fn read_env_var(key: String) -> String {
     let key_var = env::var(&key);
 

@@ -40,51 +40,61 @@ fn cal_audio_length() -> Result<String, String> {
 }
 
 /// Audio: Track ID
+/// This function retrieves the track ID from the output of the `playerctl` command.
 pub fn read_audio_trackid() -> String {
     var_cv_string("{{mpris:trackid}}")
 }
 
 /// Audio: Track number
+/// It uses a regular expression to extract the track ID from the output.
 pub fn read_audio_tracknum() -> String {
     var_cv_string("{{xesam:tracknumber}}")
 }
 
 /// Audio: Title
+/// This function retrieves the title of the currently playing audio track.
 pub fn read_audio_title() -> String {
     var_cv_string("{{xesam:title}}")
 }
 
 /// Audio: Source URL
+/// This function retrieves the source URL of the currently playing audio track.
 pub fn read_audio_sourceurl() ->  String {
     var_cv_string("{{xesam:url}}")
 }
 
 /// Audio: Album
+/// This function retrieves the album name of the currently playing audio track.
 pub fn read_audio_album() ->  String {
     var_cv_string("{{xesam:album}}")
 }
 
 /// Audio: Artist
+/// This function retrieves the artist name of the currently playing audio track.
 pub fn read_audio_artist() ->  String {
     var_cv_string("{{xesam:artist}}")
 }
 
 /// Audio: Genre
+/// This function retrieves the genre of the currently playing audio track.
 pub fn read_audio_genre() ->  String {
     var_cv_string("{{xesam:genre}}")
 }
 
 /// Audio: Content Created
+/// This function retrieves the content creation date of the currently playing audio track.
 pub fn read_audio_content_created() ->  String {
     var_cv_string("{{xesam:contentCreated}}")
 }
 
 /// Audio: Album Image URL
+/// This function retrieves the album image URL of the currently playing audio track.
 pub fn read_audio_art_url() ->  String {
     var_cv_string("{{mpris:artUrl}}")
 }
 
 /// Audio: Length Time
+/// This function retrieves the length of the currently playing audio track.
 pub fn read_audio_length() -> String {
     match cal_audio_length() {
         Ok(length) => length,

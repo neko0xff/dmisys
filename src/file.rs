@@ -5,6 +5,9 @@ use std::{
 };
 
 /// check this directory is file
+/// This function checks if the specified path exists and is a file.
+/// It returns `true` if the path is a file and `false` otherwise.
+/// If the path does not exist or an error occurs, it returns `false`.
 pub fn check_used_exists(path: &str) -> bool {
     let metadata = fs::metadata(path);
 
@@ -19,6 +22,10 @@ pub fn check_used_exists(path: &str) -> bool {
 }
 
 /// check this file type
+/// This function checks the type of a file or directory at the specified path.
+/// It returns a `Result` containing the type as a `String` if successful.
+/// If the path does not exist or an error occurs, it returns an `io::Error`.
+/// The function checks if the path is a file, directory, symbolic link, or unknown type.
 pub fn check_used_type(path: &str) -> Result<String, io::Error> {
     let metadata = fs::metadata(path)?;
     let file_type = metadata.file_type();
@@ -35,6 +42,8 @@ pub fn check_used_type(path: &str) -> Result<String, io::Error> {
 }
 
 /// check this directory is kind
+/// This function checks if the specified directory exists and is a directory.
+/// It returns a `Result` containing a vector of strings representing the entries in the directory.
 pub fn check_directory(dir_path: &str) -> Result<Vec<String>, io::Error> {
     let path = Path::new(dir_path);
     let mut entries = Vec::new();
@@ -56,6 +65,9 @@ pub fn check_directory(dir_path: &str) -> Result<Vec<String>, io::Error> {
 }
 
 /// check directory is null
+/// This function checks if the specified directory is empty.
+/// It returns `true` if the directory is empty and `false` if it contains any entries.
+/// If the directory does not exist or an error occurs, it returns `false`.
 pub fn check_directory_null(dir_path: &str) -> bool {
     let dir = check_directory(dir_path);
 
@@ -66,6 +78,7 @@ pub fn check_directory_null(dir_path: &str) -> bool {
 }
 
 /// read & return path a file data
+/// This function reads the contents of a file at the specified path.
 pub fn return_pathdata(path: &str) -> String {
     let data = fs::read_to_string(path);
 
@@ -76,6 +89,7 @@ pub fn return_pathdata(path: &str) -> String {
 }
 
 /// read config file infomation
+/// This function reads the contents of a configuration file at the specified path.
 pub fn read_config_info(file: &str) -> String {
     let config = fs::read_to_string(file);
 
@@ -86,6 +100,10 @@ pub fn read_config_info(file: &str) -> String {
 }
 
 /// read power device
+/// This function constructs a path to a power supply device's uevent file.
+/// It takes the device name (e.g., "BAT" or "ADP") and a number as input.
+/// The number is converted to a string and appended to the device name.
+/// The resulting path is returned as a `String`.
 pub fn read_power_path(device: &str, number: u8) -> String {
     let path = format!("/sys/class/power_supply/{}{}/uevent", device, number.to_string());
 
@@ -93,6 +111,11 @@ pub fn read_power_path(device: &str, number: u8) -> String {
 }
 
 /// read dmi path
+/// This function constructs a path to a DMI (Desktop Management Interface) file.
+/// It takes a value (e.g., "bios_version") as input.
+/// The value is used to create the path by appending it to the base path `/sys/class/dmi/id/`.
+/// The resulting path is returned as a `String`.
+/// The function also checks if the file exists and returns "Unknown" if it doesn't.
 pub fn read_dmi_path(value: &str) -> String {
     let dmi = format!("/sys/class/dmi/id/{}", value);
 
@@ -100,6 +123,10 @@ pub fn read_dmi_path(value: &str) -> String {
 }
 
 /// read config file a value(String)
+/// This function reads a configuration file and extracts a specific value based on the provided key.
+/// It takes the file path and the key as input.
+/// It searches for the key in the file's contents and returns the corresponding value as a `String`.
+/// If the key is not found, it returns "Unknown".
 pub fn read_config_var_string(file: &str, find: &str) -> String {
     if let Ok(contents) = fs::read_to_string(file) {
         for line in contents.lines() {
@@ -114,6 +141,12 @@ pub fn read_config_var_string(file: &str, find: &str) -> String {
 }
 
 /// read config file a value(bool)
+/// This function reads a configuration file and extracts a specific boolean value based on the provided key.
+/// It takes the file path and the key as input.
+/// It searches for the key in the file's contents and returns the corresponding value as a `bool`.
+/// If the key is not found, it returns `false`.
+/// The function expects the value to be either "1" (true) or "0" (false).
+/// If the value is not in this format, it defaults to `false`.
 pub fn read_config_var_bool(file: &str, find: &str) -> bool {
     if let Ok(contents) = fs::read_to_string(file) {
         for line in contents.lines() {
@@ -132,6 +165,12 @@ pub fn read_config_var_bool(file: &str, find: &str) -> bool {
 }
 
 /// read config file a value(usize)
+/// This function reads a configuration file and extracts a specific value based on the provided key.
+/// It takes the file path and the key as input.
+/// It searches for the key in the file's contents and returns the corresponding value as a `usize`.
+/// If the key is not found or if the value cannot be parsed as a `usize`, it returns `0`.
+/// The function expects the value to be in a format that can be parsed as a `usize`.
+/// If the value is not in this format, it defaults to `0`.
 pub fn read_config_var_usize(file: &str, find: &str) -> usize {
     if let Ok(contents) = fs::read_to_string(file) {
         for line in contents.lines() {

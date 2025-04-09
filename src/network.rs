@@ -45,22 +45,34 @@ fn get_public_ipv64() -> Result<Option<String>, Box<dyn Error>> {
     web::cn_server_get(url)
 }
 
-/// Get Public IPv4 address
+/// Get: Public IPv4 address
+/// This function retrieves the public IPv4 address by sending a request to the ipify API.
+/// It returns the address as a `String` if the request is successful.
+/// If the request fails, it returns "None".
 pub fn get_public_ipv4_address() -> String {
     cv::format_msg(get_public_ipv4())
 }
 
-/// Get Public IPv6 address
+/// Get: Public IPv6 address
+/// This function retrieves the public IPv6 address by sending a request to the ipify API.
+/// It returns the address as a `String` if the request is successful.
+/// If the request fails, it returns "None".
 pub fn get_public_ipv6_address() -> String {
     cv::format_msg(get_public_ipv6())
 }
 
-/// Get Public IPv4 or IPv4 address
+/// Get: Public IPv4 or IPv4 address
+/// This function retrieves the public IPv4 or IPv6 address by sending a request to the ipify API.
+/// It returns the address as a `String` if the request is successful.
+/// If the request fails, it returns "None".
 pub fn get_public_ipv64_address() -> String {
     cv::format_msg(get_public_ipv64())
 }
 
-/// Get Local IPv4 & IPv6 address
+/// Get: Local IPv4 & IPv6 address
+/// This function retrieves the local IPv4 and IPv6 addresses of the system.
+/// It returns a vector of tuples containing the interface name, IPv4 address, and IPv6 address.
+/// If no addresses are found, it returns a vector with a single tuple containing "None" for all fields.
 pub fn get_local_ipv64() -> Vec<(String, String, String)> {
     let if_addrs = get_if_addrs().unwrap();
     let mut ip_info = Vec::new();
@@ -89,7 +101,10 @@ pub fn get_local_ipv64() -> Vec<(String, String, String)> {
     ip_info
 }
 
-/// Get Network interfaces & Address
+/// Get: Network interfaces & Address
+/// This function retrieves the network interfaces and their associated IP addresses.
+/// It returns a vector of tuples containing the interface name and IP address.
+/// If no interfaces are found, it returns an empty vector.
 pub fn get_network_interfaces() -> Vec<(String, IpAddr)> {
     let mut interfaces = Vec::new();
 
@@ -135,7 +150,11 @@ pub fn get_network_interfaces() -> Vec<(String, IpAddr)> {
 }
 
 
-/// Get now network interfaces a Upload & Download speed
+/// Get: now network interfaces a Upload & Download speed
+/// This function retrieves the upload and download speed of network interfaces.
+/// It reads the RX and TX bytes from the `/sys/class/net/<interface>/statistics/` directory.
+/// It returns a vector of tuples containing the interface name, upload speed, and download speed.
+/// If no interfaces are found, it returns a vector with a single tuple containing "Not Found" for the interface name and 0.0 for both speeds.
 fn read_net_stat(interface: &str, stat: &str) -> Option<f64> {
     let path = format!("/sys/class/net/{}/statistics/{}", interface, stat);
 
@@ -148,7 +167,12 @@ fn read_net_stat(interface: &str, stat: &str) -> Option<f64> {
     }
 }
 
-/// Get Network received & transmitted Speed
+/// Get: Network received & transmitted Speed
+/// This function retrieves the upload and download speed of network interfaces.
+/// It reads the RX and TX bytes from the `/sys/class/net/<interface>/statistics/` directory.
+/// It returns a vector of tuples containing the interface name, upload speed, and download speed.
+/// If no interfaces are found, it returns a vector with a single tuple containing "Not Found" for the interface name and 0.0 for both speeds.
+/// The speeds are converted from bytes to megabytes.
 pub fn get_speed() -> Vec<(String, f64, f64)> {
     let mut speed_info = Vec::new();
     let dir_path = "/sys/class/net";

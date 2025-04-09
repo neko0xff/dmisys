@@ -67,6 +67,18 @@
   * SATA 版本
   * 馬達旋轉速率/硬碟類別
 
+## 音訊
+- Track
+  * ID
+  *  number
+- Title
+- Source URL
+- Album
+- Artist
+- Content Created
+- Album Image URL
+- Length Time
+
 ## 其它
 - 單位轉換
   * 時間

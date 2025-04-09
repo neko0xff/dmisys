@@ -34,13 +34,19 @@ fn read_dir_disk() -> (u64, u64) {
 }
 
 /// Read: OS release information
+/// This function reads the Linux distribution release information from the `/etc/os-release` file.
+/// It looks for the line starting with "VERSION=" and returns the value as a `String`.
+/// If the line is not found, it returns "Unknown".
 pub fn read_release() -> String {
     let file = "/etc/os-release";
 
     file::read_config_info(file)
 }
 
-/// Read Linux distribution name
+/// Read: Linux distribution name
+/// This function reads the Linux distribution name from the `/etc/os-release` file.
+/// It looks for the line starting with "NAME=" and returns the value as a `String`.
+/// If the line is not found, it returns "Unknown".
 pub fn read_distro_name() -> String {
     let file = "/etc/os-release";
     let find = "NAME=";
@@ -49,6 +55,9 @@ pub fn read_distro_name() -> String {
 }
 
 /// Read: OS name
+/// This function retrieves the operating system name using the `uname` function
+/// from the `libc` library. It returns the OS name as a `String`. If the `uname` function fails,
+/// it returns "Unknown".
 pub fn read_osname() -> String {
     unsafe {
         let mut uts = utsname {
@@ -69,6 +78,9 @@ pub fn read_osname() -> String {
 }
 
 /// Read: Hostname
+/// This function retrieves the hostname of the system using the `uname` function
+/// from the `libc` library. It returns the hostname as a `String`. If the `uname` function fails,
+/// it returns "Unknown".
 pub fn read_hostname() -> String {
     unsafe {
         let mut uts = utsname {
@@ -89,6 +101,7 @@ pub fn read_hostname() -> String {
 }
 
 /// Read: Kernel Version
+/// This function retrieves the kernel version of the operating system
 pub fn read_kernel() -> String {
     unsafe {
         let mut uts = utsname {
@@ -109,7 +122,10 @@ pub fn read_kernel() -> String {
 }
 
 
-/// Disk IO Speed
+/// Read: Disk IO Speed
+/// This function calculates the read and write speeds of the disk by reading the number of sectors
+/// read and written in the `/proc/diskstats` file. It takes two readings, one before and one after
+/// a 1-second sleep, and calculates the difference in megabytes per second.
 /// test cmd: $ dd if=/dev/zero of=testfile bs=1M count=10000 && sync
 pub fn read_io_speed() -> (f64, f64) {
     let sector_size = 512.0;
@@ -164,6 +180,11 @@ pub fn system_starttime_utc() -> String {
 }
 
 /// System init System
+/// This function reads the system initialization process name from the process table
+/// and returns it as a String. If the process is not found, it returns "Unknown".
+/// The function uses the `ps` command to get the process name of PID 1 (the init process).
+/// The `ps` command is executed with the arguments `-p 1 -o comm=` to get the command name
+/// of the process with PID 1.
 pub fn read_os_init() -> String {
     let output = Command::new("ps")
         .args(&["-p", "1", "-o", "comm="])
@@ -175,6 +196,9 @@ pub fn read_os_init() -> String {
     }
 }
 
+/// Read: Terminal type
+/// This function reads the terminal type from the environment variable "TERM"
+/// and returns it as a String. If the variable is not set, it returns "Unknown".
 pub fn read_terminal() -> String {
     env::var("TERM").unwrap_or("Unknown".to_string())
 }
