@@ -18,7 +18,7 @@ lint:
 	@$(CC3) --all-targets --all-features -- -D warnings 
 
 test:
-	@$(CC1)  test 
+	@$(CC1) test
 	
 test_bin:	
 	./target/release/example	

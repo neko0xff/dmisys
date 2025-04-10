@@ -11,7 +11,7 @@ pub fn read_host_vendor() -> String {
 /// Read: Motherboard Product Name
 /// This indicates the product name of the motherboard.
 /// The value is read from the `/sys/class/dmi/id/product_name` file.
-/// /// The value is returned as a `String`.
+/// The value is returned as a `String`.
 pub fn read_host_boardname() -> String {
     file::read_dmi_path("board_name")
 }

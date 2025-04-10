@@ -152,8 +152,8 @@ pub fn get_cpu_loading() -> f64 {
 
 /// CPU Architecture
 ///  This function retrieves the CPU architecture information using the `uname` function
-/// /// It returns the CPU architecture as a `String`. If the `uname` function fails,
-/// /// it returns "Unknown".
+/// It returns the CPU architecture as a `String`. If the `uname` function fails,
+///  it returns "Unknown".
 pub fn read_cpu_arch() -> String {
     unsafe {
         let mut uts = utsname {

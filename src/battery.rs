@@ -16,6 +16,9 @@ pub fn read_bat_info(bat_number: u8) -> String {
 }
 
 /// Extract a specific value from ADP information
+/// This function reads the battery information from the `/sys/class/power_supply/BAT[number]/uevent` file.
+/// It extracts the value associated with the specified key.
+/// The value is returned as a `String`.
 fn read_bat_value(bat_number: u8, key: &str) -> String {
     let path = read_bat_path(bat_number);
     file::read_config_var_string(&path, key)
@@ -24,7 +27,7 @@ fn read_bat_value(bat_number: u8, key: &str) -> String {
 /// Read: battery device type
 /// This indicates the type of power supply device.
 /// The value is read from the `/sys/class/power_supply/BAT[number]/uevent` file.
-/// /// The value is returned as a `String`.
+/// The value is returned as a `String`.
 pub fn read_bat_devtype(bat_number: u8) -> String {
     read_bat_value(bat_number, "DEVTYPE=")
 }
@@ -73,6 +76,10 @@ pub fn read_bat_technology(bat_number: u8) -> String {
 }
 
 /// Read: battery used charge cycle count
+/// This indicates the number of charge cycles the battery has gone through.
+/// The value is read from the `/sys/class/power_supply/BAT[number]/uevent` file.
+/// The value is returned as a `usize`.
+/// The value is in microampere-hours (uAh).
 pub fn read_bat_cyclecount(bat_number: u8) -> usize {
     let path = read_bat_path(bat_number);
     let find = "POWER_SUPPLY_CYCLE_COUNT=";

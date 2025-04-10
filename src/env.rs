@@ -55,6 +55,7 @@ pub fn read_env_var(key: String) -> String {
 }
 
 /// User Home Directory
+/// This function retrieves the user's home directory from the environment variable `HOME`.
 pub fn read_env_homedirectory() -> String {
     let find = "HOME";
 
@@ -62,6 +63,7 @@ pub fn read_env_homedirectory() -> String {
 }
 
 /// Login User name
+/// This function retrieves the login user name from the environment variable `LOGNAME`.
 pub fn read_env_loginuser() -> String {
     let find = "LOGNAME";
 
@@ -69,6 +71,7 @@ pub fn read_env_loginuser() -> String {
 }
 
 /// User name
+/// This function retrieves the user name from the environment variable `USER`.
 pub fn read_env_user() -> String {
     let find = "USER";
 
@@ -76,6 +79,7 @@ pub fn read_env_user() -> String {
 }
 
 /// Use a Shell
+/// This function retrieves the shell used by the user from the environment variable `SHELL`.
 pub fn read_env_shell() -> String {
     let find = "SHELL";
 
@@ -83,13 +87,19 @@ pub fn read_env_shell() -> String {
 }
 
 /// Language
+/// This function retrieves the language setting from the environment variable `LANG`.
+/// It is used to determine the language and locale settings for the user's environment.
+/// The value is returned as a `String`.
 pub fn read_env_lang() -> String {
     let find = "LANG";
 
     read_env_var(find.to_string())
 }
 
-/// Login Session
+/// Desktop  Session
+/// This function retrieves the desktop session information from the environment variable `DESKTOP_SESSION`.
+/// It is used to identify the current desktop environment being used.
+/// The value is returned as a `String`.
 pub fn read_env_desktopsession() -> String {
     let find = "DESKTOP_SESSION";
 
@@ -97,6 +107,9 @@ pub fn read_env_desktopsession() -> String {
 }
 
 /// Display Server
+/// This function retrieves the display server information from the environment variable `XDG_SESSION_TYPE`.
+/// It is used to identify the type of display server being used.
+/// The value is returned as a `String`.
 pub fn read_env_displayserver() -> String {
     let find = "XDG_SESSION_TYPE";
 
@@ -104,6 +117,9 @@ pub fn read_env_displayserver() -> String {
 }
 
 /// Desktop Environment
+/// This function retrieves the desktop environment information from the environment variable `XDG_SESSION_DESKTOP`.
+/// It is used to identify the current desktop environment being used.
+/// The value is returned as a `String`.
 pub fn read_env_displayde_session() -> String {
     let find = "XDG_SESSION_DESKTOP";
 
@@ -111,6 +127,9 @@ pub fn read_env_displayde_session() -> String {
 }
 
 /// Desktop Environment
+/// This function retrieves the current desktop environment information from the environment variable `XDG_CURRENT_DESKTOP`.
+/// It is used to identify the current desktop environment being used.
+/// The value is returned as a `String`.
 pub fn read_env_displayde_current() -> String {
     let find = "XDG_CURRENT_DESKTOP";
 
@@ -118,6 +137,9 @@ pub fn read_env_displayde_current() -> String {
 }
 
 /// Input Method
+/// This function retrieves the input method information from the environment variable `XMODIFIERS`.
+/// It is used to identify the input method framework being used.
+/// The value is returned as a `String`.
 pub fn read_env_inputmethod() -> String {
     let find = "XMODIFIERS=@im";
 
@@ -125,6 +147,9 @@ pub fn read_env_inputmethod() -> String {
 }
 
 ///  Working directory: now
+/// This function retrieves the current working directory from the environment variable `PWD`.
+/// It is used to identify the current directory in which the user is working.
+/// The value is returned as a `String`.
 pub fn read_env_nowpwd() -> String {
     let find = "PWD";
 
@@ -132,6 +157,9 @@ pub fn read_env_nowpwd() -> String {
 }
 
 ///  Working directory: old
+/// This function retrieves the previous working directory from the environment variable `OLDPWD`.
+/// It is used to identify the last directory the user was in before changing to the current one.
+/// The value is returned as a `String`.
 pub fn read_env_oldpwd() -> String {
     let find = "OLDPWD";
 
@@ -139,6 +167,11 @@ pub fn read_env_oldpwd() -> String {
 }
 
 /// Chrome Path
+/// This function retrieves the path to the Chrome executable from the environment variable `CHROME_EXECUTABLE`.
+/// It is used to identify the location of the Chrome browser executable.
+/// The value is returned as a `String`.
+/// If the environment variable is not set, it returns "Unknown".
+/// The function is used to check if the Chrome browser is installed and accessible.
 pub fn read_env_chromepath() -> String {
     let find = "CHROME_EXECUTABLE";
 
@@ -147,6 +180,14 @@ pub fn read_env_chromepath() -> String {
 
 
 /// dmisys libary Version
+/// This function retrieves the version of the dmisys library from the environment variable `CARGO_PKG_VERSION`.
+/// It is used to identify the version of the library being used.
+/// The value is returned as a `String`.
 pub fn read_env_dmisys() -> String {
-    env::var("CARGO_PKG_VERSION").unwrap_or("Unknown".to_string())
+    let find = "CARGO_PKG_VERSION";
+
+    match  env::var(find) {
+        Ok(value) => value,
+        Err(_) => "Unknown".to_string()
+    }
 }

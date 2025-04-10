@@ -83,7 +83,7 @@ pub fn read_display_resolution() -> String {
 }
 
 ///  Xorg Server: Verion
-/// /// This function retrieves the version of the Xorg server by executing the `X -version` command.
+/// This function retrieves the version of the Xorg server by executing the `X -version` command.
 /// It captures the output and parses it to extract the version number.
 /// If the version is found, it returns it as a `String`. Otherwise, it returns "Unknown".
 pub fn read_xserver_ver() -> String{

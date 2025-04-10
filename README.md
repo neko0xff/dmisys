@@ -1,24 +1,55 @@
 # dmisys
 
-## 維護者
-- neko_0xff(@neko0xff)
+A lightweight Rust library for accessing system configuration and environment information on Linux systems.
 
-## 想法
-主要是想把一些Linux上的系統配置用Rust讀出來，且試著包成函式庫供以其它程式方便進行呼叫！
+[![Crates.io](https://img.shields.io/crates/v/dmisys.svg)](https://crates.io/crates/dmisys)
+[![Docs.rs](https://docs.rs/dmisys/badge.svg)](https://docs.rs/dmisys)
 
-## 支援平台
-- Linux
+---
 
-## 功能
-如下是自己己實作出的功能！
+## README Version
 
-- 調用系統的一些參數規格(ex: RAM&Disk的使用情況 )
-- HTTP請求(ex: 對外的公開IP)
-- 單位轉換
+- 🌐 [繁體中文(zh-tw)](./README_zh-tw.md)
+- 🌐 [English](./README.md)
 
-## 文件
-- [範例程式](./example/)
-- [使用文件](./doc/README.md)
+---
 
-## 授權
-本倉庫採用[GPL-3.0 license](./LICENSE)進行授權
+## Maintainer
+
+- **neko_0xff** ([@neko0xff](https://github.com/neko0xff))
+
+---
+
+## Motivation
+
+The goal of this project is to provide a convenient way to retrieve various system-related information on Linux using Rust. It is designed to be modular and reusable, making it easy for other applications to incorporate system inspection functionalities.
+
+---
+
+## Supported Platform
+
+- **Linux** (currently only Linux is supported)
+
+---
+
+## Features
+
+- **System Info Retrieval**  : Retrieve system specs such as memory usage, disk usage, and more.
+
+- **HTTP Utilities**  : Utility functions for making HTTP requests (e.g. getting public IP address).
+
+- **Unit Conversion**  : Built-in converters for common units (e.g. bytes to MB/GB).
+
+---
+
+## Documentation
+
+- 📂 [Examples](./example/)
+- 📖 [User Guide](./doc/README.md)
+
+
+---
+
+## License
+
+This project is licensed under the [GNU General Public License v3.0 (GPL-3.0)](./LICENSE).
